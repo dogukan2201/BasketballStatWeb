@@ -1,4 +1,11 @@
 import React from "react";
+import {
+  FaCalendarAlt,
+  FaBasketballBall,
+  FaUsers,
+  FaFilter,
+  FaTrash,
+} from "react-icons/fa";
 
 const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   return (
@@ -8,12 +15,18 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
       } md:translate-x-0 fixed md:static z-20`}
     >
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-6">Filtreler</h2>
+        <h2 className="text-xl font-semibold mb-6 flex items-center">
+          <FaFilter className="mr-2" />
+          Filtreler
+        </h2>
 
         <div className="space-y-4">
           {/* Tarih Filtresi */}
           <div>
-            <label className="block text-sm mb-2">Tarih</label>
+            <label className=" text-sm mb-2 flex items-center">
+              <FaCalendarAlt className="mr-2" />
+              Tarih
+            </label>
             <input
               type="date"
               name="date"
@@ -25,7 +38,10 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
 
           {/* Lig Filtresi */}
           <div>
-            <label className="block text-sm mb-2">Lig</label>
+            <label className=" text-sm mb-2 flex items-center">
+              <FaBasketballBall className="mr-2" />
+              Lig
+            </label>
             <select
               name="league"
               value={filters.league}
@@ -42,7 +58,10 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
 
           {/* Takım Filtresi */}
           <div>
-            <label className="block text-sm mb-2">Takım</label>
+            <label className=" text-sm mb-2 flex items-center">
+              <FaUsers className="mr-2" />
+              Takım
+            </label>
             <input
               type="text"
               name="team"
@@ -55,7 +74,10 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
 
           {/* Durum Filtresi */}
           <div>
-            <label className="block text-sm mb-2">Durum</label>
+            <label className=" text-sm mb-2 flex items-center">
+              <FaFilter className="mr-2" />
+              Durum
+            </label>
             <select
               name="status"
               value={filters.status}
@@ -72,8 +94,9 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
           {/* Filtreleri Temizle Butonu */}
           <button
             onClick={onClearFilters}
-            className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+            className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
           >
+            <FaTrash className="mr-2" />
             Filtreleri Temizle
           </button>
         </div>
