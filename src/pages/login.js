@@ -1,29 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../services/auth"; // authService'i import etmeniz gerekiyor
-
+import { authService } from "../services/auth";
+import { useAuth } from "../context/authContext";
 function Login() {
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { setIsAuthenticated } = useAuth();
+
   const navigate = useNavigate();
-
-  useEffect(() => {
-    authService.storeApiKey();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     setError("");
     const isValid = authService.verifyApiKey(apiKey);
 
     if (isValid) {
       console.log("Başarıyla giriş yaptınız!");
-      authService.storeApiKey();
       setIsAuthenticated(true);
+      authService.storeApiKey();
       navigate("/dashboard");
     } else {
       console.log("Hatalı API Key!");

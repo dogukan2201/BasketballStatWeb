@@ -1,0 +1,85 @@
+import React from "react";
+
+const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
+  return (
+    <aside
+      className={`bg-slate-800 text-white w-64 min-h-screen transition-transform duration-300 ease-in-out ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 fixed md:static z-20`}
+    >
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-6">Filtreler</h2>
+
+        <div className="space-y-4">
+          {/* Tarih Filtresi */}
+          <div>
+            <label className="block text-sm mb-2">Tarih</label>
+            <input
+              type="date"
+              name="date"
+              value={filters.date}
+              onChange={onFilterChange}
+              className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Lig Filtresi */}
+          <div>
+            <label className="block text-sm mb-2">Lig</label>
+            <select
+              name="league"
+              value={filters.league}
+              onChange={onFilterChange}
+              className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Tüm Ligler</option>
+              <option value="superlig">Süper Lig</option>
+              <option value="premierleague">Premier Lig</option>
+              <option value="laliga">La Liga</option>
+              <option value="bundesliga">Bundesliga</option>
+            </select>
+          </div>
+
+          {/* Takım Filtresi */}
+          <div>
+            <label className="block text-sm mb-2">Takım</label>
+            <input
+              type="text"
+              name="team"
+              value={filters.team}
+              onChange={onFilterChange}
+              placeholder="Takım ara..."
+              className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Durum Filtresi */}
+          <div>
+            <label className="block text-sm mb-2">Durum</label>
+            <select
+              name="status"
+              value={filters.status}
+              onChange={onFilterChange}
+              className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">Tümü</option>
+              <option value="active">Aktif</option>
+              <option value="completed">Tamamlandı</option>
+              <option value="upcoming">Yaklaşan</option>
+            </select>
+          </div>
+
+          {/* Filtreleri Temizle Butonu */}
+          <button
+            onClick={onClearFilters}
+            className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+          >
+            Filtreleri Temizle
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;

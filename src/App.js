@@ -1,18 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
+import { authService } from "./services/auth";
+import PrivateRoute from "./components/PrivateRoute";
+import { AuthProvider } from "./context/authContext";
 
 function App() {
+  useEffect(() => {
+    authService.storeApiKey();
+  }, []);
+
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Login />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 
