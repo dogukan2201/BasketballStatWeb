@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://api-basketball.p.rapidapi.com";
+const BASE_URL = "https://v1.basketball.api-sports.io/";
 
 const API_KEY = process.env.REACT_APP_PROJECT_API_KEY;
 
@@ -46,7 +46,7 @@ export const getPlayers = async (teamId, season) => {
     const response = await apiClient.get("/players", {
       params: {
         team: teamId,
-        season,
+        season: season,
       },
     });
     return response.data;

@@ -16,10 +16,10 @@ function Player() {
 
   useEffect(() => {
     const filtered = players.filter((player) => {
+      if (!player || !player.name) return false;
       const playerName = player.name.toLowerCase();
-      const teamName = player.team.name.toLowerCase();
       const search = searchTerm.toLowerCase();
-      return playerName.includes(search) || teamName.includes(search);
+      return playerName.includes(search);
     });
     setFilteredPlayers(filtered);
   }, [searchTerm, players]);
@@ -27,7 +27,7 @@ function Player() {
   const fetchPlayers = async () => {
     try {
       setError(null);
-      const response = await getPlayers("1", "2023-2024");
+      const response = await getPlayers(139, "2023-2024");
       setPlayers(response.response || []);
       setFilteredPlayers(response.response || []);
       setLoading(false);
@@ -95,10 +95,9 @@ function Player() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>
-                <th className="text-left p-3 whitespace-nowrap">Team</th>
-                <th className="text-left p-3 whitespace-nowrap">Player</th>
-                <th className="text-left p-3 whitespace-nowrap">Position</th>
-                <th className="text-left p-3 whitespace-nowrap">Number</th>
+                <th className="text-left p-3 whitespace-nowrap">Country</th>
+                <th className="text-left p-3 whitespace-nowrap">Name</th>
+                <th className="text-left p-3 whitespace-nowrap">Id</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -107,27 +106,18 @@ function Player() {
                   <td className="p-3 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <img
-                        src={player.team.logo}
-                        alt={player.team.name}
+                        src={player.country}
                         className="w-6 h-6 object-cover"
                       />
-                      <span className="hidden sm:inline">
-                        {player.team.name}
-                      </span>
+                      <span className="hidden sm:inline">{player.country}</span>
                     </div>
                   </td>
                   <td className="p-3 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <img
-                        src={player.photo}
-                        alt={player.name}
-                        className="w-8 h-8 object-cover rounded-full"
-                      />
                       <span className="hidden sm:inline">{player.name}</span>
                     </div>
                   </td>
-                  <td className="p-3 whitespace-nowrap">{player.position}</td>
-                  <td className="p-3 whitespace-nowrap">{player.number}</td>
+                  <td className="p-3 whitespace-nowrap">{player.id}</td>
                 </tr>
               ))}
             </tbody>
