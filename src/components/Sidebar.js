@@ -38,13 +38,11 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
 
   useEffect(() => {
     if (searchTerm.length > 0) {
-      // Arama yapıldığında tüm liglerde ara
       const searchResults = allLeagues.filter((league) =>
         league.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setLeagues(searchResults);
     } else {
-      // Arama temizlendiğinde ilk 10'a dön
       setLeagues(allLeagues.slice(0, 10));
     }
   }, [searchTerm, allLeagues]);
