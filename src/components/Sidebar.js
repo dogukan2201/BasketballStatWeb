@@ -3,8 +3,9 @@ import {
   FaCalendarAlt,
   FaBasketballBall,
   FaUsers,
-  FaFilter,
   FaTrash,
+  FaFilter,
+  FaSlidersH,
 } from "react-icons/fa";
 
 const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
@@ -12,16 +13,15 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
     <aside
       className={`bg-slate-800 text-white w-64 min-h-screen transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0 fixed md:static z-20`}
+      } fixed z-20`}
     >
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-6 flex items-center">
-          <FaFilter className="mr-2" />
+        <h2 className="text-2xl font-semibold mb-6 flex items-center">
+          <FaSlidersH className="mr-2" />
           Filtreler
         </h2>
 
         <div className="space-y-4">
-          {/* Tarih Filtresi */}
           <div>
             <label className=" text-sm mb-2 flex items-center">
               <FaCalendarAlt className="mr-2" />
@@ -36,7 +36,6 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             />
           </div>
 
-          {/* Lig Filtresi */}
           <div>
             <label className=" text-sm mb-2 flex items-center">
               <FaBasketballBall className="mr-2" />
@@ -56,7 +55,6 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             </select>
           </div>
 
-          {/* Takım Filtresi */}
           <div>
             <label className=" text-sm mb-2 flex items-center">
               <FaUsers className="mr-2" />
@@ -72,7 +70,6 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             />
           </div>
 
-          {/* Durum Filtresi */}
           <div>
             <label className=" text-sm mb-2 flex items-center">
               <FaFilter className="mr-2" />
@@ -91,7 +88,6 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             </select>
           </div>
 
-          {/* Filtreleri Temizle Butonu */}
           <button
             onClick={onClearFilters}
             className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"

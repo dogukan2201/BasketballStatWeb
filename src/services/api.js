@@ -1,35 +1,57 @@
 import axios from "axios";
 
-const fetchCountries = async () => {
-  const options = {
-    method: "GET",
-    url: "https://api-basketball.p.rapidapi.com/countries",
-    headers: {
-      "x-rapidapi-key": process.env.REACT_APP_API_KEY,
-      "x-rapidapi-host": "api-basketball.p.rapidapi.com",
-    },
-  };
+const BASE_URL = "https://api-basketball.p.rapidapi.com";
 
+const API_KEY = process.env.REACT_APP_PROJECT_API_KEY;
+
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "x-rapidapi-key": API_KEY,
+    "x-rapidapi-host": "api-basketball.p.rapidapi.com",
+  },
+});
+
+export const getTeams = async (league, season) => {
   try {
-    const response = await axios.request(options);
+    const response = await apiClient.get("/teams", {
+      params: {
+        league,
+        season,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error fetching countries:", error);
+    console.error("Takımlar getirilirken hata oluştu:", error);
     throw error;
   }
 };
 
-// Test fonksiyonu
-const testAPI = async () => {
+export const getTeamStatistics = async (teamId, season) => {
   try {
-    const countries = await fetchCountries();
-    console.log("Ülkeler başarıyla alındı:", countries);
+    const response = await apiClient.get("/statistics", {
+      params: {
+        team: teamId,
+        season,
+      },
+    });
+    return response.data;
   } catch (error) {
-    console.error("API testi başarısız:", error);
+    console.error("Takım istatistikleri getirilirken hata oluştu:", error);
+    throw error;
   }
 };
-
-// API'yi test et
-testAPI();
-
-export default fetchCountries;
+export const getPlayers = async (teamId, season) => {
+  try {
+    const response = await apiClient.get("/players", {
+      params: {
+        team: teamId,
+        season,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Oyuncular getirilirken hata oluştu:", error);
+    throw error;
+  }
+};

@@ -24,7 +24,10 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/*" element={<Dashboard />}>
+              <Route path="teams" element={<Dashboard />} />
+              <Route path="players" element={<Dashboard />} />
+            </Route>
           </Routes>
         </div>
       </Router>
