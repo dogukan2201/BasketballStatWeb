@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import renderLoading from "./RenderLoading";
 import renderError from "./RenderError";
 import { getTeams } from "../services/api";
+import { IoMdClose } from "react-icons/io";
 import SearchTeam from "./SearchTeam";
 import {
   FaSort,
@@ -234,18 +235,23 @@ function Teams({ season, league }) {
 
       {selectedTeam && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="relative">
+          <div className="relative max-w-4xl w-full mx-4">
             <button
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 flex items-center"
               onClick={() => setSelectedTeam(null)}
+              className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
             >
-              <FaWindowClose className="w-5 h-5" />
+              <IoMdClose
+                size={24}
+                className="text-gray-600 hover:text-gray-800"
+              />
             </button>
-            <TeamCard
-              teamId={selectedTeam.id}
-              season={season}
-              league={league}
-            />
+            <div className="max-h-[90vh] overflow-y-auto">
+              <TeamCard
+                teamId={selectedTeam.id}
+                season={season}
+                league={league}
+              />
+            </div>
           </div>
         </div>
       )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getTeamStatistics } from "../services/api";
+import HeaderTeamCard from "./HeaderTeamCard";
 
 const TeamCard = ({ season, league, teamId }) => {
   const [team, setTeam] = useState(null);
@@ -45,31 +46,6 @@ const TeamCard = ({ season, league, teamId }) => {
       </div>
     );
   }
-
-  const renderHeader = () => (
-    <div className="flex items-center gap-6 mb-8 border-b pb-4">
-      <div className="flex items-center gap-4">
-        <img
-          src={team.logo}
-          alt={team.name}
-          className="w-24 h-24 object-contain"
-        />
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">{team.name}</h2>
-          <div className="flex items-center gap-2 mt-2">
-            <img
-              src={leagueInfo.logo}
-              alt={leagueInfo.name}
-              className="w-12 h-12 object-contain"
-            />
-            <span className="text-gray-600">
-              {leagueInfo.name} • {leagueInfo.season}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderOverallStats = () => (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -145,7 +121,7 @@ const TeamCard = ({ season, league, teamId }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 m-4 hover:shadow-lg transition-shadow max-w-4xl">
-      {renderHeader()}
+      <HeaderTeamCard team={team} leagueInfo={leagueInfo} />
       {renderOverallStats()}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {renderLocationStats(true)}
