@@ -7,23 +7,33 @@ import Players from "../components/Players";
 import { useLocation } from "react-router-dom";
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [filters, setFilters] = useState({
-    season: "",
-    league: "",
+  const [filters, setFilters] = useState(() => {
+    const savedFilters = localStorage.getItem("filters");
+    return savedFilters
+      ? JSON.parse(savedFilters)
+      : {
+          season: "",
+          league: "",
+        };
   });
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [name]: value,
-    }));
+    };
+    setFilters(newFilters);
+    localStorage.setItem("filters", JSON.stringify(newFilters));
   };
+
   const clearFilters = () => {
-    setFilters({
+    const emptyFilters = {
       season: "",
       league: "",
-    });
+    };
+    setFilters(emptyFilters);
+    localStorage.removeItem("filters");
   };
 
   return (

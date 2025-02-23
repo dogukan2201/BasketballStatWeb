@@ -56,6 +56,23 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
     setLeagues(filteredLeagues);
   }, [searchTerm, countrySearchTerm, allLeagues]);
 
+  useEffect(() => {
+    const savedFilters = localStorage.getItem("filters");
+    if (savedFilters) {
+      const parsedFilters = JSON.parse(savedFilters);
+      onFilterChange({
+        target: { name: "season", value: parsedFilters.season || "" },
+      });
+      onFilterChange({
+        target: { name: "league", value: parsedFilters.league || "" },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("filters", JSON.stringify(filters));
+  }, [filters]);
+
   const groupedLeagues = leagues.reduce((acc, league) => {
     const country = league.country?.name || "Diğer";
     if (!acc[country]) {
@@ -64,6 +81,11 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
     acc[country].push(league);
     return acc;
   }, {});
+
+  const handleClearFilters = () => {
+    localStorage.removeItem("filters");
+    onClearFilters();
+  };
 
   return (
     <aside
@@ -186,7 +208,7 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
           </div>
 
           <button
-            onClick={onClearFilters}
+            onClick={handleClearFilters}
             className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
           >
             <FaTrash className="mr-2" />

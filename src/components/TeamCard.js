@@ -5,6 +5,7 @@ const TeamCard = ({ season, league, teamId }) => {
   const [team, setTeam] = useState(null);
   const [games, setGames] = useState(null);
   const [points, setPoints] = useState(null);
+  const [leagueInfo, setLeagueInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,6 +17,7 @@ const TeamCard = ({ season, league, teamId }) => {
         setTeam(stats.team);
         setGames(stats.games);
         setPoints(stats.points);
+        setLeagueInfo(stats.league);
         setLoading(false);
       } catch (err) {
         setError("İstatistikler yüklenirken bir hata oluştu");
@@ -46,12 +48,24 @@ const TeamCard = ({ season, league, teamId }) => {
 
   const renderHeader = () => (
     <div className="flex items-center gap-6 mb-8 border-b pb-4">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800">{team.name}</h2>
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-gray-600">
-            {league.name} - {league.season}
-          </span>
+      <div className="flex items-center gap-4">
+        <img
+          src={team.logo}
+          alt={team.name}
+          className="w-24 h-24 object-contain"
+        />
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">{team.name}</h2>
+          <div className="flex items-center gap-2 mt-2">
+            <img
+              src={leagueInfo.logo}
+              alt={leagueInfo.name}
+              className="w-12 h-12 object-contain"
+            />
+            <span className="text-gray-600">
+              {leagueInfo.name} • {leagueInfo.season}
+            </span>
+          </div>
         </div>
       </div>
     </div>
