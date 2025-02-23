@@ -6,13 +6,11 @@ import Teams from "../components/Teams";
 import Players from "../components/Players";
 import { useLocation } from "react-router-dom";
 export default function Dashboard() {
-  const [filters, setFilters] = useState({
-    date: "",
-    league: "",
-    team: "",
-    status: "all",
-  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [filters, setFilters] = useState({
+    season: 2023 - 2024,
+    league: "12",
+  });
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -20,6 +18,12 @@ export default function Dashboard() {
       ...prev,
       [name]: value,
     }));
+  };
+  const clearFilters = () => {
+    setFilters({
+      season: "2023-2024",
+      league: "12",
+    });
   };
 
   return (
@@ -34,18 +38,13 @@ export default function Dashboard() {
           isOpen={isSidebarOpen}
           filters={filters}
           onFilterChange={handleFilterChange}
-          onClearFilters={() =>
-            setFilters({
-              date: "",
-              league: "",
-              team: "",
-              status: "all",
-            })
-          }
+          onClearFilters={clearFilters}
         />
         <main className="flex-1 p-4 mt-16">
           <div className="max-w-7xl mx-auto">
-            {useLocation().pathname === "/dashboard/teams" && <Teams />}
+            {useLocation().pathname === "/dashboard/teams" && (
+              <Teams season={filters.season} league={filters.league} />
+            )}
             {useLocation().pathname === "/dashboard/players" && <Players />}
           </div>
         </main>
