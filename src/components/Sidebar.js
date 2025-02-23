@@ -5,12 +5,14 @@ import {
   FaTrash,
   FaSlidersH,
   FaSearch,
+  FaFlag,
 } from "react-icons/fa";
 import { fetchLeagues } from "../services/api";
 
 const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   const [leagues, setLeagues] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [countrySearchTerm, setCountrySearchTerm] = useState("");
   const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,10 +23,8 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
       try {
         setLoading(true);
         const data = await fetchLeagues();
-        // İlk 10 ligi göster
-        setLeagues(data.response?.slice(0, 10) || []);
-        // Tüm ligleri sakla
         setAllLeagues(data.response || []);
+        setLeagues(data.response || []);
       } catch (error) {
         setError("Ligler yüklenirken bir hata oluştu");
         console.error(error);
@@ -37,17 +37,25 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.length > 0) {
-      const searchResults = allLeagues.filter((league) =>
+    let filteredLeagues = allLeagues;
+
+    if (countrySearchTerm) {
+      filteredLeagues = filteredLeagues.filter((league) =>
+        league.country?.name
+          ?.toLowerCase()
+          .includes(countrySearchTerm.toLowerCase())
+      );
+    }
+
+    if (searchTerm) {
+      filteredLeagues = filteredLeagues.filter((league) =>
         league.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setLeagues(searchResults);
-    } else {
-      setLeagues(allLeagues.slice(0, 10));
     }
-  }, [searchTerm, allLeagues]);
 
-  // Ligleri ülkelere göre grupla
+    setLeagues(filteredLeagues);
+  }, [searchTerm, countrySearchTerm, allLeagues]);
+
   const groupedLeagues = leagues.reduce((acc, league) => {
     const country = league.country?.name || "Diğer";
     if (!acc[country]) {
@@ -77,10 +85,11 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             </label>
             <select
               name="season"
-              value={filters.season}
+              value={filters.season || ""}
               onChange={onFilterChange}
               className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+              <option value="">Sezon Seçin</option>
               {[...Array(10)].map((_, i) => {
                 const year = 2024 - i;
                 const season = `${year - 1}-${year}`;
@@ -96,7 +105,7 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
           <div className="relative">
             <label className="text-sm mb-2 flex items-center">
               <FaBasketballBall className="mr-2" />
-              Lig
+              Ülke/Lig
             </label>
 
             <div className="relative">
@@ -108,7 +117,7 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                 <span>
                   {filters.league
                     ? allLeagues.find((l) => l.id === filters.league)?.name
-                    : "Lig Seçin"}
+                    : "Ülke/Lig Seçin"}
                 </span>
                 <span className="transform transition-transform duration-200">
                   ▼
@@ -117,7 +126,17 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
 
               {isLeagueDropdownOpen && (
                 <div className="absolute w-full mt-1 bg-slate-700 rounded-md shadow-lg max-h-96 overflow-y-auto z-30">
-                  <div className="p-2 sticky top-0 bg-slate-700 border-b border-slate-600">
+                  <div className="p-2 sticky top-0 bg-slate-700 border-b border-slate-600 space-y-2">
+                    <div className="relative">
+                      <FaFlag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        value={countrySearchTerm}
+                        onChange={(e) => setCountrySearchTerm(e.target.value)}
+                        placeholder="Ülke ara..."
+                        className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
                     <div className="relative">
                       <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <input
@@ -148,6 +167,7 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                               });
                               setIsLeagueDropdownOpen(false);
                               setSearchTerm("");
+                              setCountrySearchTerm("");
                             }}
                             className={`w-full px-3 py-2 text-left hover:bg-slate-600 flex items-center ${
                               filters.league === league.id ? "bg-slate-600" : ""

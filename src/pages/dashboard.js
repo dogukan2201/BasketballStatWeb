@@ -8,8 +8,8 @@ import { useLocation } from "react-router-dom";
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [filters, setFilters] = useState({
-    season: 2023 - 2024,
-    league: "12",
+    season: "",
+    league: "",
   });
 
   const handleFilterChange = (e) => {
@@ -21,8 +21,8 @@ export default function Dashboard() {
   };
   const clearFilters = () => {
     setFilters({
-      season: "2023-2024",
-      league: "12",
+      season: "",
+      league: "",
     });
   };
 
