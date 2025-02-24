@@ -1,14 +1,13 @@
 import React from "react";
 import { FaFlag, FaImage, FaEye } from "react-icons/fa";
 
-function TeamTableRow({ team, isSelected, onSelect }) {
+function TeamTableRow({ team, onSelect }) {
   return (
     <tr
-      key={team.id}
-      className="hover:bg-blue-200 cursor-pointer"
-      onClick={() => onSelect(isSelected ? null : team)}
+      className={`hover:bg-blue-200 cursor-pointer`}
+      onClick={() => onSelect(team)}
     >
-      <td className="p-3 whitespace-nowrap">
+      <td className="p-1.5 sm:p-3 whitespace-nowrap">
         <div className="flex items-center gap-2">
           {team.country?.flag ? (
             <img
@@ -24,7 +23,7 @@ function TeamTableRow({ team, isSelected, onSelect }) {
           </span>
         </div>
       </td>
-      <td className="p-3 whitespace-nowrap">
+      <td className="p-1.5 sm:p-3 whitespace-nowrap">
         <div className="flex items-center gap-2">
           {team.logo ? (
             <img
@@ -40,7 +39,7 @@ function TeamTableRow({ team, isSelected, onSelect }) {
           </span>
         </div>
       </td>
-      <td className="p-3 whitespace-nowrap">
+      <td className="p-1.5 sm:p-3 whitespace-nowrap">
         <div className="flex items-center">
           <FaEye className="mr-2" />
           {team.id}

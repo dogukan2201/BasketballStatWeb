@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { getPlayers } from "../../services/api";
 import TableView from "./TableView";
-import MobileView from "./MobileView";
 import Pagination from "./Pagination";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
 import NoPlayerFound from "./NoPlayerFound";
 import Modal from "../Modal";
 import PlayerCard from "./PlayerCard";
-
+import PlayersTitle from "./PlayersTitle";
 const Players = ({ team, season, search }) => {
   const [players, setPlayers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,30 +21,19 @@ const Players = ({ team, season, search }) => {
   });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const selectedPlayerRef = useRef(null);
-  const [isTableView, setIsTableView] = useState(window.innerWidth > 768);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPlayers();
-    const handleResize = () => setIsTableView(window.innerWidth > 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, [team, season, search]);
 
   const fetchPlayers = async () => {
     try {
+      if (!team || !season) {
+        throw new Error("Takım ve sezon parametreleri zorunludur.");
+      }
       setLoading(true);
       setError(null);
-
-      if (!team || !season) {
-        setError(
-          "Takım ve sezon bilgisi zorunludur. Lütfen her iki alanı da doldurunuz."
-        );
-        setPlayers([]);
-        setFilteredPlayers([]);
-        setLoading(false);
-        return;
-      }
 
       const params = {
         team,
@@ -53,14 +41,23 @@ const Players = ({ team, season, search }) => {
       };
       if (search && search.length >= 3) params.search = search;
 
-      const response = await getPlayers(params);
-      const playerData = response.response || [];
-      setPlayers(playerData);
-      setFilteredPlayers(playerData);
+      const { response } = await getPlayers(params);
+
+      if (!Array.isArray(response)) {
+        throw new Error("Geçersiz API yanıtı");
+      }
+
+      setPlayers(response);
+      setFilteredPlayers(response);
     } catch (error) {
+      console.error("Oyuncular yüklenirken hata oluştu:", error);
       setError(
-        "Oyuncular yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+        error.message.includes("parametreleri") || error.message.includes("API")
+          ? error.message
+          : "Oyuncular yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
       );
+      setPlayers([]);
+      setFilteredPlayers([]);
     } finally {
       setLoading(false);
     }
@@ -96,46 +93,42 @@ const Players = ({ team, season, search }) => {
   if (error) return renderError({ error });
 
   const sortedPlayers = getSortedPlayers();
-  if (sortedPlayers.length === 0) return <NoPlayerFound />;
 
   return (
     <div className="container mx-auto px-4 py-2 md:p-4">
-      {isTableView ? (
-        <TableView
-          players={sortedPlayers}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-          onPlayerSelect={(player) => {
-            setSelectedPlayer(player);
-            setIsModalOpen(true);
-          }}
-        />
+      <PlayersTitle />
+      {sortedPlayers.length === 0 ? (
+        <NoPlayerFound />
       ) : (
-        <MobileView
-          players={sortedPlayers}
-          onPlayerSelect={(player) => {
-            setSelectedPlayer(player);
-            setIsModalOpen(true);
-          }}
-        />
+        <>
+          <TableView
+            players={sortedPlayers}
+            sortConfig={sortConfig}
+            onSort={handleSort}
+            onPlayerSelect={(player) => {
+              setSelectedPlayer(player);
+              setIsModalOpen(true);
+            }}
+          />
+
+          <Pagination
+            totalItems={filteredPlayers.length}
+            entriesPerPage={entriesPerPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedPlayer(null);
+            }}
+          >
+            {selectedPlayer && <PlayerCard player={selectedPlayer} />}
+          </Modal>
+        </>
       )}
-
-      <Pagination
-        totalItems={filteredPlayers.length}
-        entriesPerPage={entriesPerPage}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
-
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedPlayer(null);
-        }}
-      >
-        {selectedPlayer && <PlayerCard player={selectedPlayer} />}
-      </Modal>
     </div>
   );
 };

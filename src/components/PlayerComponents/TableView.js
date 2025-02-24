@@ -1,45 +1,69 @@
 import React from "react";
+import { FaFlag, FaUser, FaFilter } from "react-icons/fa";
 
 const TableView = ({ players, sortConfig, onSort, onPlayerSelect }) => {
   const { field: sortField, direction: sortDirection } = sortConfig;
 
+  const getSortIcon = (field) => {
+    if (sortField === field) {
+      return sortDirection === "asc" ? " ↑" : " ↓";
+    }
+    return "";
+  };
+
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg">
+    <div className="overflow-x-auto shadow-md rounded-lg max-w-3xl mx-auto px-1 sm:px-0">
       <div className="inline-block min-w-full align-middle">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
           <thead className="bg-gray-100">
             <tr>
-              {["country", "name", "id"].map((field) => (
-                <th
-                  key={field}
-                  className="text-left p-3 whitespace-nowrap cursor-pointer hover:bg-gray-200 transition-colors duration-200 text-sm"
-                  onClick={() => onSort(field)}
-                >
-                  {field.charAt(0).toUpperCase() + field.slice(1)}
-                  {sortField === field &&
-                    (sortDirection === "asc" ? " ↑" : " ↓")}
-                </th>
-              ))}
+              <th
+                className="text-left p-1.5 sm:p-3 whitespace-nowrap cursor-pointer hover:bg-gray-200 w-[30%] sm:w-auto"
+                onClick={() => onSort("country")}
+              >
+                <div className="flex items-center">
+                  <FaFlag className="mr-1 sm:mr-2 text-[10px] sm:text-sm" />
+                  <span className="hidden sm:inline">Country</span>
+                  <span className="sm:hidden">Ctry</span>
+                  {getSortIcon("country")}
+                </div>
+              </th>
+              <th
+                className="text-left p-1.5 sm:p-3 whitespace-nowrap cursor-pointer hover:bg-gray-200 w-[40%] sm:w-auto"
+                onClick={() => onSort("name")}
+              >
+                <div className="flex items-center">
+                  <FaUser className="mr-1 sm:mr-2 text-[10px] sm:text-sm" />
+                  <span className="hidden sm:inline">Name</span>
+                  <span className="sm:hidden">Name</span>
+                  {getSortIcon("name")}
+                </div>
+              </th>
+              <th
+                className="text-left p-1.5 sm:p-3 whitespace-nowrap cursor-pointer hover:bg-gray-200 w-[30%] sm:w-auto"
+                onClick={() => onSort("id")}
+              >
+                <div className="flex items-center">
+                  <FaFilter className="mr-1 sm:mr-2 text-[10px] sm:text-sm" />
+                  ID {getSortIcon("id")}
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {players.map((player) => (
               <tr
                 key={player.id}
-                className="hover:bg-blue-200 cursor-pointer"
+                className="hover:bg-blue-50 cursor-pointer transition-colors duration-200"
                 onClick={() => onPlayerSelect(player)}
               >
-                <td className="p-3 whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{player.country}</span>
-                  </div>
+                <td className="p-1.5 sm:p-3 whitespace-nowrap">
+                  {player.country}
                 </td>
-                <td className="p-3 whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{player.name}</span>
-                  </div>
+                <td className="p-1.5 sm:p-3 whitespace-nowrap">
+                  {player.name}
                 </td>
-                <td className="p-3 whitespace-nowrap text-sm">{player.id}</td>
+                <td className="p-1.5 sm:p-3 whitespace-nowrap">{player.id}</td>
               </tr>
             ))}
           </tbody>

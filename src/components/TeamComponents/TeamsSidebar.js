@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import { fetchLeagues } from "../../services/api";
 
-const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
+const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   const [leagues, setLeagues] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [countrySearchTerm, setCountrySearchTerm] = useState("");
@@ -211,7 +211,23 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
-
+          <div>
+            <label className="text-sm mb-2 flex items-center">Takım Ara</label>
+            <div className="relative">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={filters.search || ""}
+                onChange={(e) =>
+                  onFilterChange({
+                    target: { name: "search", value: e.target.value },
+                  })
+                }
+                placeholder="Takım adı..."
+                className="w-full pl-10 pr-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
           <button
             onClick={handleClearFilters}
             className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
@@ -225,4 +241,4 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   );
 };
 
-export default Sidebar;
+export default TeamsSidebar;

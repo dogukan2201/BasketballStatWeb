@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
 import { getTeams } from "../../services/api";
-import SearchTeam from "./SearchTeam";
 import TeamCard from "./TeamCard";
 import Modal from "../Modal";
 import TeamTable from "./TeamTable";
@@ -10,9 +9,9 @@ import NoTeamsFound from "./NoTeamsFound";
 import TeamsTitle from "./TeamsTitle";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 
-function Teams({ season, league }) {
+function Teams({ season, league, search }) {
   const [teams, setTeams] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(search || "");
   const [loading, setLoading] = useState(true);
   const [filteredTeams, setFilteredTeams] = useState([]);
   const [error, setError] = useState(null);
@@ -24,16 +23,28 @@ function Teams({ season, league }) {
 
   const fetchTeams = async () => {
     try {
+      if (!season || !league) {
+        throw new Error("Sezon ve lig parametreleri zorunludur.");
+      }
+      setLoading(true);
       setError(null);
-      const response = await getTeams(league, season);
-      const teamsData = response.response || [];
-      setTeams(teamsData);
-      setFilteredTeams(teamsData);
+      const { response } = await getTeams(league, season);
+
+      if (!Array.isArray(response)) {
+        throw new Error("Geçersiz API yanıtı");
+      }
+
+      setTeams(response);
+      setFilteredTeams(response);
     } catch (error) {
       console.error("Takımlar yüklenirken hata oluştu:", error);
       setError(
-        "Takımlar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+        error.message.includes("parametreleri") || error.message.includes("API")
+          ? error.message
+          : "Takımlar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
       );
+      setTeams([]);
+      setFilteredTeams([]);
     } finally {
       setLoading(false);
     }
@@ -96,7 +107,11 @@ function Teams({ season, league }) {
 
   useEffect(() => {
     fetchTeams();
-  }, [season, league]);
+  }, [season, league, search]);
+
+  useEffect(() => {
+    setSearchTerm(search || "");
+  }, [search]);
 
   useEffect(() => {
     filterTeams();
@@ -113,11 +128,6 @@ function Teams({ season, league }) {
   return (
     <div className="p-6">
       <TeamsTitle />
-      <SearchTeam
-        value={searchTerm}
-        onChange={(value) => setSearchTerm(value)}
-        onClear={() => setSearchTerm("")}
-      />
       {filteredTeams.length === 0 ? (
         <NoTeamsFound />
       ) : (
