@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import renderLoading from "./RenderLoading";
-import renderError from "./RenderError";
-import { getTeams } from "../services/api";
+import renderLoading from "../RenderLoading";
+import renderError from "../RenderError";
+import { getTeams } from "../../services/api";
 import SearchTeam from "./SearchTeam";
 import TeamCard from "./TeamCard";
-import Modal from "./Modal";
+import Modal from "../Modal";
 import TeamTable from "./TeamTable";
 import NoTeamsFound from "./NoTeamsFound";
 import TeamsTitle from "./TeamsTitle";

@@ -7,7 +7,7 @@ import {
   FaSearch,
   FaFlag,
 } from "react-icons/fa";
-import { fetchLeagues } from "../services/api";
+import { fetchLeagues } from "../../services/api";
 
 const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   const [leagues, setLeagues] = useState([]);
@@ -23,11 +23,16 @@ const Sidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
       try {
         setLoading(true);
         const data = await fetchLeagues();
-        setAllLeagues(data.response || []);
-        setLeagues(data.response || []);
+        if (data && Array.isArray(data.response)) {
+          setAllLeagues(data.response);
+          setLeagues(data.response);
+        } else {
+          throw new Error("Geçersiz API yanıtı");
+        }
       } catch (error) {
-        setError("Ligler yüklenirken bir hata oluştu");
-        console.error(error);
+        setError("Ligler yüklenirken bir hata oluştu: " + error.message);
+        setAllLeagues([]);
+        setLeagues([]);
       } finally {
         setLoading(false);
       }

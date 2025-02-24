@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const BASE_URL = "https://api-basketball.p.rapidapi.com";
+const BASE_URL = "https://v1.basketball.api-sports.io";
 
-const API_KEY = "24494cabc4msh182f3b945be4a02p168d41jsnf6d3a2d9c011";
+const API_KEY = process.env.REACT_APP_PROJECT_API_KEY;
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -42,20 +42,23 @@ export const getTeamStatistics = async (league, season, team) => {
     throw error;
   }
 };
-export const getPlayers = async (teamId, season) => {
+
+export const getPlayers = async (params) => {
+  if (!params || Object.keys(params).length === 0) {
+    throw new Error(
+      "En az bir parametre gereklidir (id, team, season veya search)"
+    );
+  }
+
   try {
-    const response = await apiClient.get("/players", {
-      params: {
-        team: teamId,
-        season: season,
-      },
-    });
+    const response = await apiClient.get("/players", { params });
     return response.data;
   } catch (error) {
     console.error("Oyuncular getirilirken hata oluştu:", error);
     throw error;
   }
 };
+
 export const fetchLeagues = async () => {
   try {
     const response = await apiClient.get(`/leagues`);

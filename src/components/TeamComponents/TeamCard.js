@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getTeamStatistics } from "../services/api";
+import { getTeamStatistics } from "../../services/api";
 import HeaderTeamCard from "./HeaderTeamCard";
-import renderLoading from "./RenderLoading";
-import renderError from "./RenderError";
+import renderLoading from "../RenderLoading";
+import renderError from "../RenderError";
 
 const TeamCard = ({ season, league, teamId }) => {
   const [team, setTeam] = useState(null);
