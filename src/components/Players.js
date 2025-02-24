@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { getPlayers } from "../services/api";
 import PlayerCard from "./PlayerCard";
-
+import renderLoading from "./RenderLoading";
+import renderError from "./RenderError";
 function Players() {
   const [players, setPlayers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -88,25 +89,11 @@ function Players() {
   };
 
   if (loading) {
-    return (
-      <div className="p-4 flex justify-center items-center">
-        <div className="text-lg">Yükleniyor...</div>
-      </div>
-    );
+    return renderLoading();
   }
 
   if (error) {
-    return (
-      <div className="p-4">
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative"
-          role="alert"
-        >
-          <strong className="font-bold">Hata! </strong>
-          <span className="block sm:inline">{error}</span>
-        </div>
-      </div>
-    );
+    return renderError({ error });
   }
 
   const sortedPlayers = getSortedPlayers();

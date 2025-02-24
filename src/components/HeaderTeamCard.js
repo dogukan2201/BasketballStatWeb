@@ -1,4 +1,4 @@
-const HeaderTeamCard = ({ team, leagueInfo, onClose }) => (
+const HeaderTeamCard = ({ team, leagueInfo }) => (
   <div className="flex items-center justify-between gap-6 mb-8 border-b pb-4">
     <div className="flex items-center gap-4">
       <img

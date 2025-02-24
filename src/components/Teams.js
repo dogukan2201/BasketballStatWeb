@@ -111,11 +111,11 @@ function Teams({ season, league }) {
   }, [searchTerm, teams]);
 
   if (loading) {
-    return <renderLoading />;
+    return renderLoading();
   }
 
   if (error) {
-    return <renderError message={error} />;
+    return renderError({ error });
   }
 
   return (

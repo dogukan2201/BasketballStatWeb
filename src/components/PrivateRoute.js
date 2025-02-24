@@ -5,7 +5,7 @@ function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard/teams" replace />;
   }
 
   return children;
