@@ -1,7 +1,8 @@
 import React from "react";
 import { FaFlag, FaUser, FaFilter } from "react-icons/fa";
+import PlayerTableRow from "./PlayerTableRow";
 
-const TableView = ({ players, sortConfig, onSort, onPlayerSelect }) => {
+const PlayerTable = ({ players, sortConfig, onSort, onPlayerSelect }) => {
   const { field: sortField, direction: sortDirection } = sortConfig;
 
   const getSortIcon = (field) => {
@@ -52,19 +53,11 @@ const TableView = ({ players, sortConfig, onSort, onPlayerSelect }) => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {players.map((player) => (
-              <tr
+              <PlayerTableRow
                 key={player.id}
-                className="hover:bg-blue-50 cursor-pointer transition-colors duration-200"
-                onClick={() => onPlayerSelect(player)}
-              >
-                <td className="p-1.5 sm:p-3 whitespace-nowrap">
-                  {player.country}
-                </td>
-                <td className="p-1.5 sm:p-3 whitespace-nowrap">
-                  {player.name}
-                </td>
-                <td className="p-1.5 sm:p-3 whitespace-nowrap">{player.id}</td>
-              </tr>
+                player={player}
+                onSelect={onPlayerSelect}
+              />
             ))}
           </tbody>
         </table>
@@ -73,4 +66,4 @@ const TableView = ({ players, sortConfig, onSort, onPlayerSelect }) => {
   );
 };
 
-export default TableView;
+export default PlayerTable;

@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { getPlayers } from "../../services/api";
-import TableView from "./TableView";
-import Pagination from "./Pagination";
+import PlayerTable from "./PlayerTable";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
 import NoPlayerFound from "./NoPlayerFound";
 import Modal from "../Modal";
 import PlayerCard from "./PlayerCard";
 import PlayersTitle from "./PlayersTitle";
+
 const Players = ({ team, season, search }) => {
   const [players, setPlayers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [error, setError] = useState(null);
@@ -20,7 +18,6 @@ const Players = ({ team, season, search }) => {
     direction: "asc",
   });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const selectedPlayerRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -101,7 +98,7 @@ const Players = ({ team, season, search }) => {
         <NoPlayerFound />
       ) : (
         <>
-          <TableView
+          <PlayerTable
             players={sortedPlayers}
             sortConfig={sortConfig}
             onSort={handleSort}
@@ -109,13 +106,6 @@ const Players = ({ team, season, search }) => {
               setSelectedPlayer(player);
               setIsModalOpen(true);
             }}
-          />
-
-          <Pagination
-            totalItems={filteredPlayers.length}
-            entriesPerPage={entriesPerPage}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
           />
 
           <Modal
