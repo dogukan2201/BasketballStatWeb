@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getPlayerStatistics } from "../../services/api";
 
 const PlayerAvatar = ({ name }) => (
   <div className="relative mb-6 md:mb-0">
@@ -28,12 +29,38 @@ const StatCard = ({ label, value }) => (
 );
 
 const PlayerCard = ({ player }) => {
+  const [playerStats, setPlayerStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlayerStats = async () => {
+      try {
+        const response = await getPlayerStatistics(Number(player.id));
+        setPlayerStats(response.response[0]);
+        setLoading(false);
+      } catch (error) {
+        console.error("İstatistikler yüklenirken hata:", error);
+        setLoading(false);
+      }
+    };
+
+    if (player.id) {
+      fetchPlayerStats();
+    }
+  }, [player.id]);
+
   const stats = [
-    { label: "Forma Numarası", value: player.number },
-    { label: "Yaş", value: player.age },
-    { label: "Pozisyon", value: player.position },
-    { label: "ID", value: player.id },
+    { label: "Maç Sayısı", value: playerStats?.games?.appearences },
+    { label: "Toplam Sayı", value: playerStats?.points?.total },
+    { label: "Ortalama Sayı", value: playerStats?.points?.average },
+    { label: "Ribaund", value: playerStats?.rebounds?.total },
+    { label: "Asist", value: playerStats?.assists?.total },
+    { label: "Blok", value: playerStats?.blocks?.total },
   ];
+
+  if (loading) {
+    return <div>Yükleniyor...</div>;
+  }
 
   return (
     <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl p-8 w-full">
@@ -46,7 +73,7 @@ const PlayerCard = ({ player }) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
         {stats.map((stat) => (
           <StatCard key={stat.label} label={stat.label} value={stat.value} />
         ))}

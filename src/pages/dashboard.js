@@ -5,7 +5,13 @@ import TeamsSidebar from "../components/TeamComponents/TeamsSidebar";
 import Teams from "../components/TeamComponents/main";
 import Players from "../components/PlayerComponents/main";
 import PlayerSidebar from "../components/PlayerComponents/PlayerSidebar";
-import { INITIAL_TEAM_FILTERS, INITIAL_PLAYER_FILTERS } from "../constants";
+import Games from "../components/GameComponents/main";
+import GamesSidebar from "../components/GameComponents/GamesSidebar";
+import {
+  INITIAL_TEAM_FILTERS,
+  INITIAL_PLAYER_FILTERS,
+  INITIAL_GAME_FILTERS,
+} from "../constants";
 import { useLocation } from "react-router-dom";
 
 export default function Dashboard() {
@@ -24,6 +30,13 @@ export default function Dashboard() {
       : INITIAL_PLAYER_FILTERS;
   });
 
+  const [gameFilters, setGameFilters] = useState(() => {
+    const savedGameFilters = localStorage.getItem("gameFilters");
+    return savedGameFilters
+      ? JSON.parse(savedGameFilters)
+      : INITIAL_GAME_FILTERS;
+  });
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     const newFilters = { ...teamFilters, [name]: value };
@@ -38,6 +51,13 @@ export default function Dashboard() {
     localStorage.setItem("playerFilters", JSON.stringify(newFilters));
   };
 
+  const handleGameFilterChange = (e) => {
+    const { name, value } = e.target;
+    const newFilters = { ...gameFilters, [name]: value };
+    setGameFilters(newFilters);
+    localStorage.setItem("gameFilters", JSON.stringify(newFilters));
+  };
+
   const clearTeamFilters = () => {
     setTeamFilters(INITIAL_TEAM_FILTERS);
     localStorage.removeItem("TeamFilters");
@@ -46,6 +66,11 @@ export default function Dashboard() {
   const clearPlayerFilters = () => {
     setPlayerFilters(INITIAL_PLAYER_FILTERS);
     localStorage.removeItem("playerFilters");
+  };
+
+  const clearGameFilters = () => {
+    setGameFilters(INITIAL_GAME_FILTERS);
+    localStorage.removeItem("gameFilters");
   };
 
   const renderSidebar = () => {
@@ -69,6 +94,16 @@ export default function Dashboard() {
         />
       );
     }
+    if (location.pathname === "/dashboard/games") {
+      return (
+        <GamesSidebar
+          isOpen={isSidebarOpen}
+          filters={gameFilters}
+          onFilterChange={handleGameFilterChange}
+          onClearFilters={clearGameFilters}
+        />
+      );
+    }
     return null;
   };
 
@@ -78,6 +113,9 @@ export default function Dashboard() {
     }
     if (location.pathname === "/dashboard/players") {
       return <Players {...playerFilters} />;
+    }
+    if (location.pathname === "/dashboard/games") {
+      return <Games {...gameFilters} />;
     }
     return null;
   };

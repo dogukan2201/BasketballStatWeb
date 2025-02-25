@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
   FaCalendarAlt,
   FaBasketballBall,
-  FaTrash,
   FaSlidersH,
   FaSearch,
   FaFlag,
 } from "react-icons/fa";
 import { fetchLeagues } from "../../services/api";
+import ClearFilterButton from "../ClearFilterButton";
 
 const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   const [leagues, setLeagues] = useState([]);
@@ -99,16 +99,16 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
       } fixed z-20`}
     >
       <div className="p-4">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center">
-          <FaSlidersH className="mr-2" />
-          Filtreler
+        <h2 className="text-2xl  mb-6 mt-12 flex items-center">
+          <FaSlidersH className="mr-2 " />
+          Team Filters
         </h2>
 
         <div className="space-y-4">
           <div>
             <label className=" text-sm mb-2 flex items-center">
               <FaCalendarAlt className="mr-2" />
-              Sezon
+              Season
             </label>
             <select
               name="season"
@@ -116,7 +116,7 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
               onChange={onFilterChange}
               className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Sezon Seçin</option>
+              <option value="">Select Season</option>
               {[...Array(10)].map((_, i) => {
                 const year = 2024 - i;
                 const season = `${year - 1}-${year}`;
@@ -132,19 +132,19 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
           <div className="relative">
             <label className="text-sm mb-2 flex items-center">
               <FaBasketballBall className="mr-2" />
-              Ülke/Lig
+              Country/League
             </label>
 
             <div className="relative">
               <button
                 onClick={() => setIsLeagueDropdownOpen(!isLeagueDropdownOpen)}
-                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-between items-center"
+                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none  flex justify-between items-center"
                 disabled={loading}
               >
                 <span>
                   {filters.league
                     ? allLeagues.find((l) => l.id === filters.league)?.name
-                    : "Ülke/Lig Seçin"}
+                    : "Select Country/League"}
                 </span>
                 <span className="transform transition-transform duration-200">
                   ▼
@@ -160,8 +160,8 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                         type="text"
                         value={countrySearchTerm}
                         onChange={(e) => setCountrySearchTerm(e.target.value)}
-                        placeholder="Ülke ara..."
-                        className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search Country..."
+                        className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none"
                       />
                     </div>
                     <div className="relative">
@@ -170,8 +170,8 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Lig ara..."
-                        className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search League..."
+                        className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none"
                       />
                     </div>
                   </div>
@@ -212,7 +212,9 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
           <div>
-            <label className="text-sm mb-2 flex items-center">Takım Ara</label>
+            <label className="text-sm mb-2 flex items-center">
+              Search Team
+            </label>
             <div className="relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -223,18 +225,12 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                     target: { name: "search", value: e.target.value },
                   })
                 }
-                placeholder="Takım adı..."
-                className="w-full pl-10 pr-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Team Name..."
+                className="w-full pl-10 pr-3 py-2 bg-slate-700 rounded-md focus:outline-none"
               />
             </div>
           </div>
-          <button
-            onClick={handleClearFilters}
-            className="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
-          >
-            <FaTrash className="mr-2" />
-            Filtreleri Temizle
-          </button>
+          <ClearFilterButton onClearFilters={handleClearFilters} />
         </div>
       </div>
     </aside>

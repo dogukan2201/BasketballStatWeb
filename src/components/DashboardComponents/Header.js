@@ -9,6 +9,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
   const menuItems = [
     { name: "Teams", href: "/dashboard/teams", current: true },
     { name: "Players", href: "/dashboard/players", current: false },
+    { name: "Games", href: "/dashboard/games", current: false },
   ];
   return (
     <nav className="bg-slate-800 text-white fixed top-0 left-0 right-0 z-50">
@@ -25,7 +26,11 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
                 <FaChevronRight className="h-5 w-5" />
               )}
             </button>
-            <h1 className="text-2xl font-bold">Arfitect</h1>
+            <img
+              src="/assets/logo.svg"
+              alt="Arfitect Logo"
+              className="h-10 w-auto max-w-[140px] object-contain"
+            />
             <div className="hidden md:block">
               <div className="flex items-baseline space-x-4">
                 {menuItems.map((item, index) => (

@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 function PlayerTableRow({ player, onSelect }) {
   return (
     <tr
-      className="hover:bg-blue-50 cursor-pointer transition-colors duration-200"
+      className="hover:bg-blue-200 cursor-pointer"
       onClick={() => onSelect(player)}
     >
       <td className="p-1.5 sm:p-3 whitespace-nowrap">

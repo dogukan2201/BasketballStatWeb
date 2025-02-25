@@ -68,3 +68,68 @@ export const fetchLeagues = async () => {
     throw error;
   }
 };
+
+export const getPlayerStatistics = async (playerId) => {
+  if (!playerId || typeof parseInt(playerId) !== "number") {
+    throw new Error("Valid player ID (number) is required");
+  }
+
+  try {
+    const response = await apiClient.get("/games/statistics/players", {
+      params: { id: parseInt(playerId) },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching player statistics:", error);
+    throw error;
+  }
+};
+
+export const getGames = async (league, season) => {
+  try {
+    const response = await apiClient.get("/games", {
+      params: { league, season },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Maçlar getirilirken hata oluştu:", error);
+    throw error;
+  }
+};
+
+export const getGameStatistics = async (params) => {
+  if (!params || Object.keys(params).length === 0) {
+    throw new Error("En az bir parametre gereklidir (id veya ids)");
+  }
+
+  if (params.ids && !params.ids.match(/^\d+(-\d+)*$/)) {
+    throw new Error('ids parametresi "id-id-id" formatında olmalıdır');
+  }
+
+  if (params.ids) {
+    const idsCount = params.ids.split("-").length;
+    if (idsCount > 20) {
+      throw new Error("En fazla 20 maç ID'si kullanılabilir");
+    }
+  }
+
+  try {
+    const response = await apiClient.get("/games/statistics", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Maç istatistikleri getirilirken hata oluştu:", error);
+    throw error;
+  }
+};
+
+export const getGameDetails = async (gameId) => {
+  try {
+    const response = await apiClient.get("/games/statistics/teams", {
+      params: { id: gameId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Maç detayları yüklenirken hata:", error);
+    throw error;
+  }
+};
