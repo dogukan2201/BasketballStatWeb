@@ -9,13 +9,18 @@ import {
 import { fetchLeagues } from "../../services/api";
 import ClearFilterButton from "../ClearFilterButton";
 
-const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
+const LeaguesSidebar = ({
+  isOpen,
+  filters,
+  onFilterChange,
+  onClearFilters,
+}) => {
   const [leagues, setLeagues] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [countrySearchTerm, setCountrySearchTerm] = useState("");
-  const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
   const [allLeagues, setAllLeagues] = useState([]);
 
   useEffect(() => {
@@ -42,6 +47,22 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   }, []);
 
   useEffect(() => {
+    const savedFilters = localStorage.getItem("leagueFilters");
+    if (savedFilters) {
+      try {
+        const parsedFilters = JSON.parse(savedFilters);
+        onFilterChange({
+          target: { name: "season", value: parsedFilters.season || "" },
+        });
+        onFilterChange({
+          target: { name: "league", value: parsedFilters.league || "" },
+        });
+      } catch (error) {
+        console.error("Filter parsing error:", error);
+      }
+    }
+  }, []);
+  useEffect(() => {
     let filteredLeagues = allLeagues;
 
     if (countrySearchTerm) {
@@ -60,22 +81,8 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
 
     setLeagues(filteredLeagues);
   }, [searchTerm, countrySearchTerm, allLeagues]);
-
   useEffect(() => {
-    const savedFilters = localStorage.getItem("TeamFilters");
-    if (savedFilters) {
-      const parsedFilters = JSON.parse(savedFilters);
-      onFilterChange({
-        target: { name: "season", value: parsedFilters.season || "" },
-      });
-      onFilterChange({
-        target: { name: "league", value: parsedFilters.league || "" },
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("TeamFilters", JSON.stringify(filters));
+    localStorage.setItem("leagueFilters", JSON.stringify(filters));
   }, [filters]);
 
   const groupedLeagues = leagues.reduce((acc, league) => {
@@ -86,8 +93,8 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
     acc[country].push(league);
     return acc;
   }, {});
-
   const handleClearFilters = () => {
+    localStorage.removeItem("leagueFilters");
     localStorage.removeItem("TeamFilters");
     onClearFilters();
   };
@@ -99,14 +106,14 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
       } fixed z-20`}
     >
       <div className="p-4">
-        <h2 className="text-2xl  mb-6 mt-12 flex items-center">
-          <FaSlidersH className="mr-2 " />
-          Team Filters
+        <h2 className="text-2xl mb-6 mt-12 flex items-center">
+          <FaSlidersH className="mr-2" />
+          League Filters
         </h2>
 
         <div className="space-y-4">
           <div>
-            <label className=" text-sm mb-2 flex items-center">
+            <label className="text-sm mb-2 flex items-center">
               <FaCalendarAlt className="mr-2" />
               Season
             </label>
@@ -138,7 +145,7 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             <div className="relative">
               <button
                 onClick={() => setIsLeagueDropdownOpen(!isLeagueDropdownOpen)}
-                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none  flex justify-between items-center"
+                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none flex justify-between items-center"
                 disabled={loading}
               >
                 <span>
@@ -196,11 +203,11 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                               setSearchTerm("");
                               setCountrySearchTerm("");
                             }}
-                            className={`w-full px-3 py-2 text-left hover:bg-slate-600 flex items-center ${
+                            className={`w-full px-3 py-2 text-left hover:bg-slate-600 ${
                               filters.league === league.id ? "bg-slate-600" : ""
                             }`}
                           >
-                            <span>{league.name}</span>
+                            {league.name}
                           </button>
                         ))}
                       </div>
@@ -211,25 +218,7 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
             </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
-          <div>
-            <label className="text-sm mb-2 flex items-center">
-              Search Team
-            </label>
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={filters.search || ""}
-                onChange={(e) =>
-                  onFilterChange({
-                    target: { name: "search", value: e.target.value },
-                  })
-                }
-                placeholder="Team Name..."
-                className="w-full pl-10 pr-3 py-2 bg-slate-700 rounded-md focus:outline-none"
-              />
-            </div>
-          </div>
+
           <ClearFilterButton onClearFilters={handleClearFilters} />
         </div>
       </div>
@@ -237,4 +226,4 @@ const TeamsSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
   );
 };
 
-export default TeamsSidebar;
+export default LeaguesSidebar;

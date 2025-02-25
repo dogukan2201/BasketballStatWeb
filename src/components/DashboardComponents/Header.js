@@ -10,6 +10,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
     { name: "Teams", href: "/dashboard/teams", current: true },
     { name: "Players", href: "/dashboard/players", current: false },
     { name: "Games", href: "/dashboard/games", current: false },
+    { name: "Leagues", href: "/dashboard/leagues", current: false },
   ];
   return (
     <nav className="bg-slate-800 text-white fixed top-0 left-0 right-0 z-50">

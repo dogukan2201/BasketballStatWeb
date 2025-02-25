@@ -17,3 +17,8 @@ export const INITIAL_GAME_FILTERS = {
   season: "",
   team: "",
 };
+
+export const INITIAL_LEAGUE_FILTERS = {
+  season: "",
+  league: "",
+};

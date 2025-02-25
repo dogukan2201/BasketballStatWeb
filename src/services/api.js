@@ -133,3 +133,22 @@ export const getGameDetails = async (gameId) => {
     throw error;
   }
 };
+
+export const getStandings = async (league, season) => {
+  if (!league || !season) {
+    throw new Error("Lig ve sezon parametreleri zorunludur");
+  }
+
+  try {
+    const response = await apiClient.get("/standings", {
+      params: {
+        league,
+        season,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lig sıralaması getirilirken hata oluştu:", error);
+    throw error;
+  }
+};

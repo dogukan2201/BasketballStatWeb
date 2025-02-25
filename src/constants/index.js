@@ -13,3 +13,8 @@ export const INITIAL_GAME_FILTERS = {
   league: "",
   season: "",
 };
+export const INITIAL_LEAGUE_FILTERS = {
+  country: "",
+  season: "",
+  league: "",
+};
