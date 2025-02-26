@@ -7,6 +7,7 @@ export const INITIAL_PLAYER_FILTERS = {
   search: "",
   team: "",
   season: "",
+  playerId: "",
 };
 export const INITIAL_GAME_FILTERS = {
   date: "",

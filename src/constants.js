@@ -5,9 +5,9 @@ export const INITIAL_TEAM_FILTERS = {
 };
 
 export const INITIAL_PLAYER_FILTERS = {
-  league: "",
   season: "",
   team: "",
+  id: "",
   search: "",
 };
 

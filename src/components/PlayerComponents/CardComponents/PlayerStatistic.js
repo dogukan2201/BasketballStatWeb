@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { getPlayerStatistics } from "../../services/api";
-import renderLoading from "../RenderLoading";
-import renderError from "../RenderError";
+import { getPlayerStatistics } from "../../../services/api";
+import renderLoading from "../../RenderLoading";
+import renderError from "../../RenderError";
 import NotFoundStatistic from "./NotFoundStatistic";
 
 const StatCard = ({ title, children, gradient }) => (

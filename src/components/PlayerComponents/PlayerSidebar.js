@@ -77,6 +77,24 @@ const PlayerSidebar = ({ isOpen, filters, onFilterChange, onClearFilters }) => {
                 className="w-full pl-10 pr-3 py-2 bg-slate-700 rounded-md focus:outline-none "
               />
             </div>
+            <div>
+              <label className="text-sm mb-2 flex items-center">
+                <FaUserAlt className="mr-2" />
+                Player ID
+              </label>
+              <input
+                type="number"
+                name="id"
+                value={filters.id || ""}
+                onChange={(e) => {
+                  if (e.target.value >= 0) {
+                    onFilterChange(e);
+                  }
+                }}
+                placeholder="Player ID..."
+                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none "
+              />
+            </div>
           </div>
           <ClearFilterButton onClearFilters={onClearFilters} />
         </div>

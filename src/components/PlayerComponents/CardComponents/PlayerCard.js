@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPlayerStatistics } from "../../services/api";
+import { getPlayerStatistics } from "../../../services/api";
 
 const PlayerAvatar = ({ name }) => (
   <div className="relative mb-6 md:mb-0">

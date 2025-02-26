@@ -1,65 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { getPlayers } from "../../services/api";
-import PlayerTable from "./PlayerTable";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
-import NoPlayerFound from "./NoPlayerFound";
+import NoPlayerFound from "./TableComponents/NoPlayerFound";
 import Modal from "../Modal";
-import PlayerCard from "./PlayerCard";
 import PlayersTitle from "./PlayersTitle";
-import PlayerStatistic from "./PlayerStatistic";
+import PlayerStatistic from "./CardComponents/PlayerStatistic";
+import PlayerTable from "./TableComponents/PlayerTable";
 
-const Players = ({ team, season, search }) => {
+const Players = ({ team, season, search, id }) => {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
   const [sortConfig, setSortConfig] = useState({
     field: null,
     direction: "asc",
   });
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    fetchPlayers();
-  }, [team, season, search]);
-
   const fetchPlayers = async () => {
     try {
       if (!team || !season) {
         throw new Error("Takım ve sezon parametreleri zorunludur.");
       }
+
+      if (search && search.length < 3) {
+        throw new Error("Arama için en az 3 karakter girilmelidir.");
+      }
+
       setLoading(true);
       setError(null);
 
-      const params = {
+      const apiResponse = await getPlayers({
         team,
         season,
-      };
-      if (search && search.length >= 3) params.search = search;
+        ...(search?.length >= 3 && { search }),
+        ...(id && { id }),
+      });
 
-      const { response } = await getPlayers(params);
-
-      if (!Array.isArray(response)) {
-        throw new Error("Geçersiz API yanıtı");
+      if (apiResponse.errors && apiResponse.errors.length > 0) {
+        throw new Error(apiResponse.errors.join(", "));
       }
 
-      setPlayers(response);
-      setFilteredPlayers(response);
+      const playerData = apiResponse.response;
+      console.log("Player Data:", playerData);
+
+      if (!Array.isArray(playerData)) {
+        throw new Error("Oyuncu verisi geçerli bir format değil");
+      }
+
+      setPlayers(playerData);
+      setFilteredPlayers(playerData);
     } catch (error) {
-      console.error("Oyuncular yüklenirken hata oluştu:", error);
-      setError(
-        error.message.includes("parametreleri") || error.message.includes("API")
-          ? error.message
-          : "Oyuncular yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
-      );
+      console.error("API Hatası:", error);
+      setError(error.message);
       setPlayers([]);
       setFilteredPlayers([]);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchPlayers();
+  }, [team, season, search, id]);
 
   const handleSort = (field) => {
     setSortConfig((prevConfig) => ({
@@ -88,13 +92,13 @@ const Players = ({ team, season, search }) => {
   };
 
   if (loading) return renderLoading();
+  if (error) return renderError({ error });
 
   const sortedPlayers = getSortedPlayers();
 
   return (
     <div className="container mx-auto px-4 py-2 md:p-4">
       <PlayersTitle />
-
       {sortedPlayers.length === 0 ? (
         <NoPlayerFound />
       ) : (
@@ -130,6 +134,7 @@ Players.defaultProps = {
   team: null,
   season: null,
   search: null,
+  id: null,
 };
 
 export default Players;
