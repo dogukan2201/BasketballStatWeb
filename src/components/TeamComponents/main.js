@@ -4,7 +4,7 @@ import renderError from "../RenderError";
 import TeamCard from "./TeamCard";
 import Modal from "../Modal";
 import TeamTable from "./TeamTable";
-import NoTeamsFound from "./NoTeamsFound";
+import RenderNotFound from "../RenderNotFound";
 import TeamsTitle from "./TeamsTitle";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { getTeams } from "../../services/api";
@@ -110,7 +110,7 @@ function Teams({ season, league, search }) {
     <div className="p-6">
       <TeamsTitle />
       {filteredTeams.length === 0 ? (
-        <NoTeamsFound />
+        <RenderNotFound />
       ) : (
         <TeamTable
           teams={filteredTeams}

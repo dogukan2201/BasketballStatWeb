@@ -2,28 +2,28 @@ const TableHeader = () => (
   <thead>
     <tr className="border-b border-gray-200">
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        Sıra
+        Rank
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        Takım
+        Team
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        O
+        P
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        G
+        W
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        M
+        L
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
         %
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        Atılan Sayı
+        Goals For
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
-        Yenen Sayı
+        Goals Against
       </th>
       <th className="p-3 text-left bg-gray-50 font-semibold text-gray-600">
         Form

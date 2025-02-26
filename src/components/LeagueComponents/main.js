@@ -3,7 +3,7 @@ import LeaguesTitle from "./LeaguesTitle";
 import { getStandings } from "../../services/api";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
-import NoLeaguesFound from "./NoLeaguesFound";
+import RenderNotFound from "../RenderNotFound";
 import LeagueStanding from "./LeagueStanding";
 function LeaguesMain({ season, league, stage, group }) {
   const [standings, setStandings] = useState(null);
@@ -24,14 +24,14 @@ function LeaguesMain({ season, league, stage, group }) {
         const response = await getStandings(league, season, stage, group);
 
         if (!response?.response) {
-          throw new Error("Sıralama verileri alınamadı");
+          throw new Error("Standings data could not be retrieved");
         }
 
         setStandings(response.response[0]);
       } catch (error) {
-        console.error("Sıralama verileri yüklenirken hata:", error);
+        console.error("Error loading standings data:", error);
         setError(
-          "Sıralama verileri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+          "An error occurred while loading standings data. Please try again later."
         );
       } finally {
         setLoading(false);
@@ -43,7 +43,7 @@ function LeaguesMain({ season, league, stage, group }) {
 
   if (loading) return renderLoading();
   if (error) return renderError({ error });
-  if (!standings) return <NoLeaguesFound />;
+  if (!standings) return <RenderNotFound />;
 
   return (
     <div className="h-screen bg-gray-100 flex">

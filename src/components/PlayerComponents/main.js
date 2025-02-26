@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getPlayers } from "../../services/api";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
-import NoPlayerFound from "./TableComponents/NoPlayerFound";
+import RenderNotFound from "../RenderNotFound";
 import Modal from "../Modal";
 import PlayersTitle from "./PlayersTitle";
 import PlayerStatistic from "./CardComponents/PlayerStatistic";
@@ -99,7 +99,7 @@ const Players = ({ team, season, search, id }) => {
     <div className="container mx-auto px-4 py-2 md:p-4">
       <PlayersTitle />
       {sortedPlayers.length === 0 ? (
-        <NoPlayerFound />
+        <RenderNotFound />
       ) : (
         <>
           <PlayerTable

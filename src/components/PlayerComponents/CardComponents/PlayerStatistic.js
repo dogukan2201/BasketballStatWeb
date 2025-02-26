@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getPlayerStatistics } from "../../../services/api";
 import renderLoading from "../../RenderLoading";
 import renderError from "../../RenderError";
-import NotFoundStatistic from "./NotFoundStatistic";
+import RenderNotFound from "../../RenderNotFound";
 import { Pagination } from "./StatisticComponents/Pagination";
 import PlayerHeader from "./StatisticComponents/PlayerHeader";
 import BasicStats from "./StatisticComponents/BasicStats";
@@ -63,7 +63,7 @@ const PlayerStatistic = ({ player, id, season }) => {
 
   if (loading) return renderLoading();
   if (error) return renderError(error);
-  if (!statistics || statistics.length === 0) return <NotFoundStatistic />;
+  if (!statistics || statistics.length === 0) return <RenderNotFound />;
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;

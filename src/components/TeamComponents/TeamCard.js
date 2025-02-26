@@ -27,7 +27,7 @@ const TeamCard = ({ season, league, teamId }) => {
         });
         setLoading(false);
       } catch (err) {
-        setError("İstatistikler yüklenirken bir hata oluştu");
+        setError("An error occurred while loading statistics");
         setLoading(false);
       }
     };
@@ -49,14 +49,14 @@ const TeamCard = ({ season, league, teamId }) => {
         <span className="block text-3xl font-semibold text-blue-600">
           {teamStats.games.played.all}
         </span>
-        <span className="text-gray-600">Toplam Maç</span>
+        <span className="text-gray-600">Total Games</span>
       </div>
 
       <div className="bg-gray-50 p-4 rounded-lg text-center">
         <span className="block text-3xl font-semibold text-green-600">
           {teamStats.games.wins.all.total}
         </span>
-        <span className="text-gray-600">Galibiyet</span>
+        <span className="text-gray-600">Wins</span>
         <span className="text-sm text-green-600">
           ({(teamStats.games.wins.all.percentage * 100).toFixed(1)}%)
         </span>
@@ -66,7 +66,7 @@ const TeamCard = ({ season, league, teamId }) => {
         <span className="block text-3xl font-semibold text-red-600">
           {teamStats.games.loses.all.total}
         </span>
-        <span className="text-gray-600">Mağlubiyet</span>
+        <span className="text-gray-600">Losses</span>
         <span className="text-sm text-red-600">
           ({(teamStats.games.loses.all.percentage * 100).toFixed(1)}%)
         </span>
@@ -76,7 +76,7 @@ const TeamCard = ({ season, league, teamId }) => {
         <span className="block text-2xl font-semibold text-purple-600">
           {teamStats.points.for.average.all}
         </span>
-        <span className="text-gray-600">Maç Başı Sayı</span>
+        <span className="text-gray-600">Points Per Game</span>
       </div>
     </div>
   );
@@ -92,28 +92,26 @@ const TeamCard = ({ season, league, teamId }) => {
 
   const renderLocationStats = (isHome) => {
     const location = isHome ? "home" : "away";
-    const title = isHome
-      ? "Ev Sahibi İstatistikleri"
-      : "Deplasman İstatistikleri";
+    const title = isHome ? "Home Statistics" : "Away Statistics";
 
     return (
       <div className="bg-gray-50 p-6 rounded-lg">
         <h3 className="font-semibold text-gray-700 mb-4 text-lg">{title}</h3>
         <div className="space-y-3">
-          {renderStatRow("Maçlar", teamStats.games.played[location])}
+          {renderStatRow("Games", teamStats.games.played[location])}
           {renderStatRow(
-            "Galibiyet",
+            "Wins",
             `${teamStats.games.wins[location].total} (${(
               teamStats.games.wins[location].percentage * 100
             ).toFixed(1)}%)`,
             true
           )}
           {renderStatRow(
-            "Sayı Ortalaması",
+            "Average Points",
             teamStats.points.for.average[location]
           )}
           {renderStatRow(
-            "Yenilen Sayı",
+            "Points Against",
             teamStats.points.against.average[location]
           )}
         </div>

@@ -20,7 +20,7 @@ export const LeagueProvider = ({ children }) => {
         const data = await fetchLeagues();
         if (data && Array.isArray(data.response)) {
           setLeagues(data.response);
-          localStorage.setItem("leagues", JSON.stringify(data.response)); // Verileri sakla
+          localStorage.setItem("leagues", JSON.stringify(data.response));
         } else {
           throw new Error("Geçersiz API yanıtı");
         }
@@ -33,7 +33,7 @@ export const LeagueProvider = ({ children }) => {
     };
 
     getLeagues();
-  }, [leagues]); // Eğer leagues boşsa API çağrısı yap
+  }, [leagues]);
 
   return (
     <LeagueContext.Provider value={{ leagues, loading, error }}>

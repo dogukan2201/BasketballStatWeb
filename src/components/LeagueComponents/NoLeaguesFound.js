@@ -7,11 +7,11 @@ function NoLeaguesFound() {
       <div className="text-center">
         <FaSearchMinus className="mx-auto h-16 w-16 text-gray-400 mb-4" />
         <h2 className="text-xl font-semibold text-gray-700 mb-2">
-          Sonuç Bulunamadı
+          No Results Found
         </h2>
         <p className="text-gray-500">
-          Aradığınız kriterlere uygun takım bulunamadı. Lütfen farklı bir arama
-          terimi deneyin.
+          No teams found matching your criteria. Please try a different search
+          term.
         </p>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { getGames } from "../../services/api";
 import GameCard from "./GameCard";
 import Modal from "../Modal";
 import GameTable from "./GameTable";
-import NoGamesFound from "./NoGamesFound";
+import RenderNotFound from "../RenderNotFound";
 import GamesTitle from "./GamesTitle";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 
@@ -117,7 +117,7 @@ function Games({ season, league, team, date }) {
     <div className="p-6">
       <GamesTitle />
       {filteredGames.length === 0 ? (
-        <NoGamesFound />
+        <RenderNotFound />
       ) : (
         <GameTable
           games={filteredGames}
