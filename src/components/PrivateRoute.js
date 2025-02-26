@@ -1,11 +1,11 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { authService } from "../services/auth";
 
 function PrivateRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = authService.isAuthenticated();
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard/teams" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

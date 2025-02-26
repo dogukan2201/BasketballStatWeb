@@ -4,46 +4,50 @@ const SECRET_KEY = process.env.REACT_APP_PROJECT_SECRET_KEY;
 const API_KEY = process.env.REACT_APP_PROJECT_API_KEY;
 
 export const authService = {
-  encryptApiKey: () => {
-    return CryptoJS.AES.encrypt(API_KEY, SECRET_KEY).toString();
+  generateToken: (apiKey) => {
+    const tokenData = {
+      key: apiKey,
+      exp: new Date().getTime() + 24 * 60 * 60 * 1000, // 24 saat geçerli
+    };
+    return CryptoJS.AES.encrypt(
+      JSON.stringify(tokenData),
+      SECRET_KEY
+    ).toString();
   },
 
-  decryptApiKey: (encryptedApiKey) => {
-    const bytes = CryptoJS.AES.decrypt(encryptedApiKey, SECRET_KEY);
-    return bytes.toString(CryptoJS.enc.Utf8);
-  },
+  verifyToken: (token) => {
+    try {
+      const bytes = CryptoJS.AES.decrypt(token, SECRET_KEY);
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-  storeApiKey: () => {
-    const encryptedKey = authService.encryptApiKey();
-    sessionStorage.setItem("apiKey", encryptedKey);
-  },
+      // Token süresi dolmuş mu kontrol et
+      if (decryptedData.exp < new Date().getTime()) {
+        authService.logout();
+        return false;
+      }
 
-  getStoredApiKey: () => {
-    const encryptedKey = sessionStorage.getItem("apiKey");
-    if (!encryptedKey) return null;
-    return authService.decryptApiKey(encryptedKey);
-  },
-
-  verifyApiKey: (inputApiKey) => {
-    if (!inputApiKey || inputApiKey.trim() === "") {
+      return true;
+    } catch (error) {
       return false;
     }
+  },
 
-    const storedApiKey = authService.getStoredApiKey();
-    if (!storedApiKey) return false;
-
-    if (inputApiKey === storedApiKey) {
+  login: (apiKey) => {
+    if (apiKey === API_KEY) {
+      const token = authService.generateToken(apiKey);
+      sessionStorage.setItem("auth_token", token);
       return true;
     }
-
     return false;
   },
+
   isAuthenticated: () => {
-    const apiKey = sessionStorage.getItem("apiKey");
-    return !!apiKey;
+    const token = sessionStorage.getItem("auth_token");
+    if (!token) return false;
+    return authService.verifyToken(token);
   },
 
   logout: () => {
-    sessionStorage.removeItem("apiKey");
+    sessionStorage.removeItem("auth_token");
   },
 };

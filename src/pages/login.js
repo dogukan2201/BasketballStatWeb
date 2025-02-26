@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../services/auth";
-import { useAuth } from "../context/authContext";
 import renderLoading from "../components/RenderLoading";
 import {
   AiOutlineLock,
@@ -13,7 +12,6 @@ const Login = () => {
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,11 +20,9 @@ const Login = () => {
     setError("");
 
     try {
-      const isValid = authService.verifyApiKey(apiKey);
+      const isLoggedIn = authService.login(apiKey);
 
-      if (isValid) {
-        setIsAuthenticated(true);
-        authService.storeApiKey();
+      if (isLoggedIn) {
         navigate("/hub");
       } else {
         setError("Invalid API Key");

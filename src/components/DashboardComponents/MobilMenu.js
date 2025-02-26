@@ -1,8 +1,17 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaSignOutAlt } from "react-icons/fa";
+import { authService } from "../../services/auth";
 
 const MobilMenu = ({ isOpen }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/");
+  };
+
   const menuItems = [
     {
       name: "Teams",
@@ -46,6 +55,13 @@ const MobilMenu = ({ isOpen }) => {
     <div className={`${isOpen ? "block" : "hidden"} md:hidden`}>
       <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
         {menuItems.map(renderMobileMenuItem)}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white"
+        >
+          <FaSignOutAlt className="h-5 w-5" />
+          <span>Çıkış Yap</span>
+        </button>
       </div>
     </div>
   );

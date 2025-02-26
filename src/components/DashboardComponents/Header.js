@@ -1,13 +1,22 @@
 import React, { useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaSignOutAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import MobilMenu from "./MobilMenu";
 import MobilMenuButton from "./MobilMenuButton";
 import NavbarMenuItems from "./NavbarMenuItems";
 import { useLocation } from "react-router-dom";
+import { authService } from "../../services/auth";
 
 export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/");
+  };
+
   const menuItems = [
     {
       name: "Teams",
@@ -58,7 +67,16 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
               </div>
             </div>
           </div>
-          <MobilMenuButton isOpen={isOpen} setIsOpen={setIsOpen} />
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-md text-white hover:bg-slate-700 focus:outline-none transition-all duration-300 ease-in-out"
+            >
+              <FaSignOutAlt className="h-5 w-5" />
+              <span>Logout</span>
+            </button>
+            <MobilMenuButton isOpen={isOpen} setIsOpen={setIsOpen} />
+          </div>
         </div>
         <MobilMenu isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>

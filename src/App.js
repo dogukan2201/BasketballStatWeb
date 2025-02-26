@@ -1,18 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import Hub from "./pages/hub";
-import { authService } from "./services/auth";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./context/authContext";
 import { LeagueProvider } from "./context/LeagueContext";
 
 function App() {
-  useEffect(() => {
-    authService.storeApiKey();
-  }, []);
-
   return (
     <AuthProvider>
       <LeagueProvider>
