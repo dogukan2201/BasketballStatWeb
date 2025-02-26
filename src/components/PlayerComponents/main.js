@@ -7,6 +7,7 @@ import NoPlayerFound from "./NoPlayerFound";
 import Modal from "../Modal";
 import PlayerCard from "./PlayerCard";
 import PlayersTitle from "./PlayersTitle";
+import PlayerStatistic from "./PlayerStatistic";
 
 const Players = ({ team, season, search }) => {
   const [players, setPlayers] = useState([]);
@@ -87,13 +88,13 @@ const Players = ({ team, season, search }) => {
   };
 
   if (loading) return renderLoading();
-  if (error) return renderError({ error });
 
   const sortedPlayers = getSortedPlayers();
 
   return (
     <div className="container mx-auto px-4 py-2 md:p-4">
       <PlayersTitle />
+
       {sortedPlayers.length === 0 ? (
         <NoPlayerFound />
       ) : (
@@ -115,7 +116,9 @@ const Players = ({ team, season, search }) => {
               setSelectedPlayer(null);
             }}
           >
-            {selectedPlayer && <PlayerCard player={selectedPlayer} />}
+            {selectedPlayer && (
+              <PlayerStatistic player={selectedPlayer?.id} season={season} />
+            )}
           </Modal>
         </>
       )}

@@ -69,22 +69,23 @@ export const fetchLeagues = async () => {
   }
 };
 
-export const getPlayerStatistics = async (playerId) => {
-  if (!playerId || typeof parseInt(playerId) !== "number") {
-    throw new Error("Valid player ID (number) is required");
-  }
-
+export const getPlayerStatistics = async (id, player, season) => {
   try {
     const response = await apiClient.get("/games/statistics/players", {
-      params: { id: parseInt(playerId) },
+      params: {
+        id: id,
+        player,
+        season,
+      },
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching player statistics:", error);
+    console.error("Oyuncu istatistikleri getirilirken hata oluştu:", error);
     throw error;
   }
 };
 
+//Games
 export const getGames = async (league, season) => {
   try {
     const response = await apiClient.get("/games", {
@@ -108,7 +109,7 @@ export const getGameDetails = async (gameId) => {
     throw error;
   }
 };
-
+//Standings
 export const getStandings = async (league, season, stage, group) => {
   if (!league || !season) {
     throw new Error("Lig ve sezon parametreleri zorunludur");
