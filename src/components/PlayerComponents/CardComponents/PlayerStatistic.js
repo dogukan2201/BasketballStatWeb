@@ -3,12 +3,12 @@ import { getPlayerStatistics } from "../../../services/api";
 import renderLoading from "../../RenderLoading";
 import renderError from "../../RenderError";
 import NotFoundStatistic from "./NotFoundStatistic";
-import { Pagination } from "./Pagination";
+import { Pagination } from "./StatisticComponents/Pagination";
 import PlayerHeader from "./StatisticComponents/PlayerHeader";
 import BasicStats from "./StatisticComponents/BasicStats";
 import ShotStats from "./StatisticComponents/ShotStats";
 import FreeThrowStats from "./StatisticComponents/FreeThrowStats";
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 4;
 
 const StatisticCard = ({ stat }) => (
   <div className="bg-white rounded-xl p-6 ">
@@ -41,7 +41,7 @@ const PlayerStatistic = ({ player, id, season }) => {
         const response = await getPlayerStatistics(id, player, season);
 
         if (!response) {
-          setError("Sunucudan yanıt alınamadı");
+          setError("No response from server");
         }
 
         if (response?.errors) {
@@ -51,8 +51,8 @@ const PlayerStatistic = ({ player, id, season }) => {
         const statsData = response?.response || [];
         setStatistics(Array.isArray(statsData) ? statsData : [statsData]);
       } catch (err) {
-        console.error("API Hatası:", err);
-        setError(err.message || "İstatistikler yüklenirken bir hata oluştu");
+        console.error("API Error:", err);
+        setError(err.message || "An error occurred while loading statistics");
       } finally {
         setLoading(false);
       }

@@ -22,11 +22,11 @@ const Players = ({ team, season, search, id }) => {
   const fetchPlayers = async () => {
     try {
       if (!team || !season) {
-        throw new Error("Takım ve sezon parametreleri zorunludur.");
+        throw new Error("Team and season parameters are required.");
       }
 
       if (search && search.length < 3) {
-        throw new Error("Arama için en az 3 karakter girilmelidir.");
+        throw new Error("Search requires at least 3 characters.");
       }
 
       setLoading(true);
@@ -46,13 +46,13 @@ const Players = ({ team, season, search, id }) => {
       const playerData = apiResponse.response;
 
       if (!Array.isArray(playerData)) {
-        throw new Error("Oyuncu verisi geçerli bir format değil");
+        throw new Error("Player data is not in a valid format.");
       }
 
       setPlayers(playerData);
       setFilteredPlayers(playerData);
     } catch (error) {
-      console.error("API Hatası:", error);
+      console.error("API Error:", error);
       setError(error.message);
       setPlayers([]);
       setFilteredPlayers([]);

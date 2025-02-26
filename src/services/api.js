@@ -12,7 +12,7 @@ const apiClient = axios.create({
   },
 });
 
-// Rate limiting için basit bir kuyruk sistemi
+// Simple queue system for rate limiting
 const requestQueue = [];
 let isProcessing = false;
 
@@ -29,7 +29,7 @@ const processQueue = async () => {
     reject(error);
   } finally {
     isProcessing = false;
-    setTimeout(() => processQueue(), 1000); // 1 saniye bekle
+    setTimeout(() => processQueue(), 1000); // wait for 1 second
   }
 };
 
@@ -55,7 +55,7 @@ export const getTeams = async (league, season, search) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Takımlar getirilirken hata oluştu:", error);
+    console.error("Error fetching teams:", error);
     throw error;
   }
 };
@@ -71,7 +71,7 @@ export const getTeamStatistics = async (league, season, team) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Takım istatistikleri getirilirken hata oluştu:", error);
+    console.error("Error fetching team statistics:", error);
     throw error;
   }
 };
@@ -79,7 +79,7 @@ export const getTeamStatistics = async (league, season, team) => {
 export const getPlayers = async (params) => {
   if (!params || Object.keys(params).length === 0) {
     throw new Error(
-      "En az bir parametre gereklidir (id, team, season veya search)"
+      "At least one parameter is required (id, team, season, or search)"
     );
   }
 
@@ -87,7 +87,7 @@ export const getPlayers = async (params) => {
     const response = await apiClient.get("/players", { params });
     return response.data;
   } catch (error) {
-    console.error("Oyuncular getirilirken hata oluştu:", error);
+    console.error("Error fetching players:", error);
     throw error;
   }
 };
@@ -99,10 +99,10 @@ export const fetchLeagues = async ({ signal } = {}) => {
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("İstek iptal edildi");
+        console.log("Request canceled");
         throw error;
       }
-      console.error("Ligler getirilirken hata oluştu:", error);
+      console.error("Error fetching leagues:", error);
       throw error;
     }
   });
@@ -119,7 +119,7 @@ export const getPlayerStatistics = async (id, player, season) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Oyuncu istatistikleri getirilirken hata oluştu:", error);
+    console.error("Error fetching player statistics:", error);
     throw error;
   }
 };
@@ -135,7 +135,7 @@ export const getGames = async (league, season, team, date) => {
     const response = await apiClient.get("/games", { params });
     return response.data;
   } catch (error) {
-    console.error("Maçlar getirilirken hata oluştu:", error);
+    console.error("Error fetching games:", error);
     throw error;
   }
 };
@@ -147,14 +147,14 @@ export const getGameDetails = async (gameId) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Maç detayları yüklenirken hata:", error);
+    console.error("Error fetching game details:", error);
     throw error;
   }
 };
 //Standings
 export const getStandings = async (league, season, stage, group) => {
   if (!league || !season) {
-    throw new Error("Lig ve sezon parametreleri zorunludur");
+    throw new Error("League and season parameters are required");
   }
 
   try {
@@ -168,7 +168,7 @@ export const getStandings = async (league, season, stage, group) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lig sıralaması getirilirken hata oluştu:", error);
+    console.error("Error fetching standings:", error);
     throw error;
   }
 };
@@ -183,10 +183,10 @@ export const getStandingsStages = async (league, season, { signal } = {}) => {
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("İstek iptal edildi");
+        console.log("Request canceled");
         throw error;
       }
-      console.error("Stage getirilirken hata oluştu:", error);
+      console.error("Error fetching stages:", error);
       throw error;
     }
   });
@@ -202,10 +202,10 @@ export const getStandingsGroups = async (league, season, { signal } = {}) => {
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("İstek iptal edildi");
+        console.log("Request canceled");
         throw error;
       }
-      console.error("Groups getirilirken hata oluştu:", error);
+      console.error("Error fetching groups:", error);
       throw error;
     }
   });
@@ -216,7 +216,7 @@ export const getSeasons = async () => {
     const response = await apiClient.get("/seasons");
     return response.data;
   } catch (error) {
-    console.error("Sezonlar getirilirken hata oluştu:", error);
+    console.error("Error fetching seasons:", error);
     throw error;
   }
 };

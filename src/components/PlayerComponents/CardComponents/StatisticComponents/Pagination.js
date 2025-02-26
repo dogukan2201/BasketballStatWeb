@@ -1,3 +1,5 @@
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
 export const PaginationButton = ({ onClick, disabled, children, isActive }) => (
   <button
     onClick={onClick}
@@ -56,21 +58,8 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === 1}
       >
         <span className="flex items-center">
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          <span className="hidden md:inline">Önceki</span>
+          <FaChevronLeft className="w-4 h-4 mr-1" />
+          <span className="hidden md:inline">Previous</span>
         </span>
       </PaginationButton>
 
@@ -95,21 +84,8 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === totalPages}
       >
         <span className="flex items-center">
-          <span className="hidden md:inline">Sonraki</span>
-          <svg
-            className="w-4 h-4 ml-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <span className="hidden md:inline">Next</span>
+          <FaChevronRight className="w-4 h-4 ml-1" />
         </span>
       </PaginationButton>
     </div>

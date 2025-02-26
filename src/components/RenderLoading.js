@@ -9,8 +9,8 @@ const renderLoading = () => {
             <FaSpinner className="w-10 h-10 text-blue-600 animate-spin" />
           </div>
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Yükleniyor</h3>
-            <p className="text-gray-600">Lütfen bekleyiniz...</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Loading</h3>
+            <p className="text-gray-600">Please wait...</p>
           </div>
         </div>
       </div>
