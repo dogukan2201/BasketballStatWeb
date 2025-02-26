@@ -14,6 +14,7 @@ function LeaguesMain({ season, league, stage, group }) {
     const fetchStandings = async () => {
       if (!league || !season) {
         setLoading(false);
+        setError("League and season parameters are mandatory");
         return;
       }
 

@@ -10,11 +10,13 @@ const PlayerAvatar = ({ name }) => (
 );
 
 const PlayerInfo = ({ name, country, position }) => (
-  <div className="text-center md:text-left">
-    <h2 className="text-3xl font-bold text-gray-800 mb-2">{name}</h2>
-    <p className="text-gray-600 font-medium text-lg mb-2">{country}</p>
-    <div className="inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-semibold">
-      {position}
+  <div className="text-center mb-8">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">{name}</h2>
+    <div className="flex justify-center items-center space-x-4">
+      <span className="text-gray-600 font-medium">{country}</span>
+      <span className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-semibold">
+        {position}
+      </span>
     </div>
   </div>
 );
@@ -64,15 +66,11 @@ const PlayerCard = ({ player }) => {
 
   return (
     <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl p-8 w-full">
-      <div className="flex flex-col md:flex-row items-center md:space-x-8 mb-8">
-        <PlayerAvatar name={player.name} />
-        <PlayerInfo
-          name={player.name}
-          country={player.country}
-          position={player.position}
-        />
-      </div>
-
+      <PlayerInfo
+        name={player.name}
+        country={player.country}
+        position={player.position}
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
         {stats.map((stat) => (
           <StatCard key={stat.label} label={stat.label} value={stat.value} />

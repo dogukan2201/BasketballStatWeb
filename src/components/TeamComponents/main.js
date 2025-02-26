@@ -10,7 +10,6 @@ import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { getTeams } from "../../services/api";
 
 function Teams({ season, league, search }) {
-  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredTeams, setFilteredTeams] = useState([]);
   const [error, setError] = useState(null);
@@ -37,7 +36,6 @@ function Teams({ season, league, search }) {
         throw new Error("Geçersiz API yanıtı");
       }
 
-      setTeams(result.response);
       setFilteredTeams(result.response);
     } catch (error) {
       console.error("Takımlar yüklenirken hata oluştu:", error);
@@ -46,7 +44,6 @@ function Teams({ season, league, search }) {
           ? error.message
           : "Takımlar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
       );
-      setTeams([]);
       setFilteredTeams([]);
     } finally {
       setLoading(false);

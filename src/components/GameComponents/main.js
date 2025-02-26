@@ -9,7 +9,7 @@ import NoGamesFound from "./NoGamesFound";
 import GamesTitle from "./GamesTitle";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 
-function Games({ season, league }) {
+function Games({ season, league, team, date }) {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredGames, setFilteredGames] = useState([]);
@@ -27,7 +27,7 @@ function Games({ season, league }) {
       }
       setLoading(true);
       setError(null);
-      const { response } = await getGames(league, season);
+      const { response } = await getGames(league, season, team, date);
 
       if (!Array.isArray(response)) {
         throw new Error("Geçersiz API yanıtı");
@@ -103,7 +103,7 @@ function Games({ season, league }) {
 
   useEffect(() => {
     fetchGames();
-  }, [season, league]);
+  }, [season, league, team, date]);
 
   if (loading) {
     return renderLoading();

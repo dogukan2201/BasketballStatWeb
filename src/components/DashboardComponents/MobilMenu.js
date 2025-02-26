@@ -1,9 +1,29 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 const MobilMenu = ({ isOpen }) => {
+  const location = useLocation();
   const menuItems = [
-    { name: "Teams", href: "/dashboard/teams", current: true },
-    { name: "Players", href: "/dashboard/players", current: false },
+    {
+      name: "Teams",
+      href: "/dashboard/teams",
+      current: location.pathname === "/dashboard/teams",
+    },
+    {
+      name: "Players",
+      href: "/dashboard/players",
+      current: location.pathname === "/dashboard/players",
+    },
+    {
+      name: "Games",
+      href: "/dashboard/games",
+      current: location.pathname === "/dashboard/games",
+    },
+    {
+      name: "Leagues",
+      href: "/dashboard/leagues",
+      current: location.pathname === "/dashboard/leagues",
+    },
   ];
   const renderMobileMenuItem = (item) => {
     const baseClasses = "block px-3 py-2 rounded-md text-base font-medium";

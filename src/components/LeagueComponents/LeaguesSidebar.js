@@ -6,11 +6,8 @@ import {
   FaSearch,
   FaFlag,
 } from "react-icons/fa";
-import {
-  fetchLeagues,
-  getStandingsStages,
-  getStandingsGroups,
-} from "../../services/api";
+import { getStandingsStages, getStandingsGroups } from "../../services/api";
+import { useLeagues } from "../../context/LeagueContext";
 import ClearFilterButton from "../ClearFilterButton";
 
 const LeaguesSidebar = ({
@@ -19,55 +16,13 @@ const LeaguesSidebar = ({
   onFilterChange,
   onClearFilters,
 }) => {
-  const [leagues, setLeagues] = useState([]);
+  const { leagues: allLeagues, loading, error } = useLeagues();
   const [searchTerm, setSearchTerm] = useState("");
   const [countrySearchTerm, setCountrySearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
-  const [allLeagues, setAllLeagues] = useState([]);
+  const [leagues, setLeagues] = useState([]);
   const [stages, setStages] = useState([]);
   const [groups, setGroups] = useState([]);
-
-  useEffect(() => {
-    const getLeagues = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchLeagues();
-        if (data && Array.isArray(data.response)) {
-          setAllLeagues(data.response);
-          setLeagues(data.response);
-        } else {
-          throw new Error("Geçersiz API yanıtı");
-        }
-      } catch (error) {
-        setError("Ligler yüklenirken bir hata oluştu: " + error.message);
-        setAllLeagues([]);
-        setLeagues([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getLeagues();
-  }, []);
-
-  useEffect(() => {
-    const savedFilters = localStorage.getItem("leagueFilters");
-    if (savedFilters) {
-      try {
-        const parsedFilters = JSON.parse(savedFilters);
-        onFilterChange({
-          target: { name: "season", value: parsedFilters.season || "" },
-        });
-        onFilterChange({
-          target: { name: "league", value: parsedFilters.league || "" },
-        });
-      } catch (error) {
-        console.error("Filter parsing error:", error);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     let filteredLeagues = allLeagues;

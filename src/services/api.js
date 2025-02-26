@@ -12,6 +12,38 @@ const apiClient = axios.create({
   },
 });
 
+// Rate limiting için basit bir kuyruk sistemi
+const requestQueue = [];
+let isProcessing = false;
+
+const processQueue = async () => {
+  if (isProcessing || requestQueue.length === 0) return;
+
+  isProcessing = true;
+  const { request, resolve, reject } = requestQueue.shift();
+
+  try {
+    const response = await request();
+    resolve(response);
+  } catch (error) {
+    reject(error);
+  } finally {
+    isProcessing = false;
+    setTimeout(() => processQueue(), 1000); // 1 saniye bekle
+  }
+};
+
+const queueRequest = (requestFn) => {
+  return new Promise((resolve, reject) => {
+    requestQueue.push({
+      request: requestFn,
+      resolve,
+      reject,
+    });
+    processQueue();
+  });
+};
+
 export const getTeams = async (league, season, search) => {
   try {
     const response = await apiClient.get("/teams", {
@@ -60,14 +92,20 @@ export const getPlayers = async (params) => {
   }
 };
 
-export const fetchLeagues = async () => {
-  try {
-    const response = await apiClient.get(`/leagues`);
-    return response.data;
-  } catch (error) {
-    console.error("Ligler getirilirken hata oluştu:", error);
-    throw error;
-  }
+export const fetchLeagues = async ({ signal } = {}) => {
+  return queueRequest(async () => {
+    try {
+      const response = await apiClient.get(`/leagues`, { signal });
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("İstek iptal edildi");
+        throw error;
+      }
+      console.error("Ligler getirilirken hata oluştu:", error);
+      throw error;
+    }
+  });
 };
 
 export const getPlayerStatistics = async (id, player, season) => {
@@ -87,11 +125,14 @@ export const getPlayerStatistics = async (id, player, season) => {
 };
 
 //Games
-export const getGames = async (league, season) => {
+export const getGames = async (league, season, team, date) => {
   try {
-    const response = await apiClient.get("/games", {
-      params: { league, season },
-    });
+    const params = { league, season };
+
+    if (team) params.team = team;
+    if (date) params.date = date;
+
+    const response = await apiClient.get("/games", { params });
     return response.data;
   } catch (error) {
     console.error("Maçlar getirilirken hata oluştu:", error);
@@ -132,31 +173,42 @@ export const getStandings = async (league, season, stage, group) => {
   }
 };
 
-export const getStandingsStages = async (league, season) => {
-  try {
-    const response = await apiClient.get("/standings/stages", {
-      params: { league, season },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Stage getirilirken hata oluştu:", error);
-    throw error;
-  }
+export const getStandingsStages = async (league, season, { signal } = {}) => {
+  return queueRequest(async () => {
+    try {
+      const response = await apiClient.get("/standings/stages", {
+        params: { league, season },
+        signal,
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("İstek iptal edildi");
+        throw error;
+      }
+      console.error("Stage getirilirken hata oluştu:", error);
+      throw error;
+    }
+  });
 };
 
-export const getStandingsGroups = async (league, season) => {
-  try {
-    const response = await apiClient.get("/standings/groups", {
-      params: {
-        league,
-        season,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Groups getirilirken hata oluştu:", error);
-    throw error;
-  }
+export const getStandingsGroups = async (league, season, { signal } = {}) => {
+  return queueRequest(async () => {
+    try {
+      const response = await apiClient.get("/standings/groups", {
+        params: { league, season },
+        signal,
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("İstek iptal edildi");
+        throw error;
+      }
+      console.error("Groups getirilirken hata oluştu:", error);
+      throw error;
+    }
+  });
 };
 
 export const getSeasons = async () => {

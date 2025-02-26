@@ -153,6 +153,9 @@ const PlayerStatistic = ({ player, id, season }) => {
   const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 5; // Her sayfada gösterilecek istatistik sayısı
 
   useEffect(() => {
     const fetchPlayerStats = async () => {
@@ -160,17 +163,24 @@ const PlayerStatistic = ({ player, id, season }) => {
         setLoading(true);
         setError(null);
 
-        const response = await getPlayerStatistics(id, player, season);
+        const response = await getPlayerStatistics(id, player, season, {
+          page: currentPage,
+          per_page: itemsPerPage,
+        });
 
         if (!response) {
           setError("Sunucudan yanıt alınamadı");
         }
+
         if (response?.errors) {
           setError(Object.values(response.errors).join(", "));
         }
 
         const statsData = response?.response || [];
         setStatistics(Array.isArray(statsData) ? statsData : [statsData]);
+
+        // Toplam sayfa sayısını ayarla (API'den gelen toplam sayıyı kullan)
+        setTotalPages(Math.ceil(response?.total || 0) / itemsPerPage);
       } catch (err) {
         console.error("API Hatası:", err);
         setError(err.message || "İstatistikler yüklenirken bir hata oluştu");
@@ -180,7 +190,11 @@ const PlayerStatistic = ({ player, id, season }) => {
     };
 
     fetchPlayerStats();
-  }, [player, id, season]);
+  }, [player, id, season, currentPage]); // currentPage değiştiğinde yeniden yükle
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   if (loading) return renderLoading();
   if (error) return renderError(error);
@@ -195,6 +209,26 @@ const PlayerStatistic = ({ player, id, season }) => {
         {statistics.map((stat, index) => (
           <StatisticCard key={index} stat={stat} />
         ))}
+      </div>
+
+      <div className="flex justify-center items-center mt-8 space-x-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300"
+        >
+          Önceki
+        </button>
+        <span className="text-gray-600">
+          Sayfa {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300"
+        >
+          Sonraki
+        </button>
       </div>
     </div>
   );

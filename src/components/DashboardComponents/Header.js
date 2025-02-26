@@ -1,16 +1,35 @@
 import React, { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 import MobilMenu from "./MobilMenu";
 import MobilMenuButton from "./MobilMenuButton";
 import NavbarMenuItems from "./NavbarMenuItems";
 
 export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
   const menuItems = [
-    { name: "Teams", href: "/dashboard/teams", current: true },
-    { name: "Players", href: "/dashboard/players", current: false },
-    { name: "Games", href: "/dashboard/games", current: false },
-    { name: "Leagues", href: "/dashboard/leagues", current: false },
+    {
+      name: "Teams",
+      href: "/dashboard/teams",
+      current: location.pathname === "/dashboard/teams",
+    },
+    {
+      name: "Players",
+      href: "/dashboard/players",
+      current: location.pathname === "/dashboard/players",
+    },
+    {
+      name: "Games",
+      href: "/dashboard/games",
+      current: location.pathname === "/dashboard/games",
+    },
+    {
+      name: "Leagues",
+      href: "/dashboard/leagues",
+      current: location.pathname === "/dashboard/leagues",
+    },
   ];
   return (
     <nav className="bg-slate-800 text-white fixed top-0 left-0 right-0 z-50">
