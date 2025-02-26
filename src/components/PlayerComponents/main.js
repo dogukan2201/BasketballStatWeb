@@ -44,7 +44,6 @@ const Players = ({ team, season, search, id }) => {
       }
 
       const playerData = apiResponse.response;
-      console.log("Player Data:", playerData);
 
       if (!Array.isArray(playerData)) {
         throw new Error("Oyuncu verisi geçerli bir format değil");

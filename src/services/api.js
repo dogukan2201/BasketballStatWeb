@@ -12,12 +12,13 @@ const apiClient = axios.create({
   },
 });
 
-export const getTeams = async (league, season) => {
+export const getTeams = async (league, season, search) => {
   try {
     const response = await apiClient.get("/teams", {
       params: {
         league,
         season,
+        search,
       },
     });
     return response.data;

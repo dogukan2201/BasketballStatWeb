@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from "react";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
-import { getTeams } from "../../services/api";
 import TeamCard from "./TeamCard";
 import Modal from "../Modal";
 import TeamTable from "./TeamTable";
 import NoTeamsFound from "./NoTeamsFound";
 import TeamsTitle from "./TeamsTitle";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import { getTeams } from "../../services/api";
 
 function Teams({ season, league, search }) {
   const [teams, setTeams] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(search || "");
   const [loading, setLoading] = useState(true);
   const [filteredTeams, setFilteredTeams] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState(null);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
-  const [selectedTeam, setSelectedTeam] = useState(null);
 
   const fetchTeams = async () => {
     try {
@@ -28,14 +27,18 @@ function Teams({ season, league, search }) {
       }
       setLoading(true);
       setError(null);
-      const { response } = await getTeams(league, season);
+      const result = await getTeams(
+        league,
+        season,
+        search?.length >= 3 ? search : undefined
+      );
 
-      if (!Array.isArray(response)) {
+      if (!Array.isArray(result.response)) {
         throw new Error("Geçersiz API yanıtı");
       }
 
-      setTeams(response);
-      setFilteredTeams(response);
+      setTeams(result.response);
+      setFilteredTeams(result.response);
     } catch (error) {
       console.error("Takımlar yüklenirken hata oluştu:", error);
       setError(
@@ -48,17 +51,6 @@ function Teams({ season, league, search }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const filterTeams = () => {
-    const filtered = teams.filter((team) => {
-      const teamName = team?.name?.toLowerCase() || "";
-      const countryName = team?.country?.name?.toLowerCase() || "";
-      const search = searchTerm.toLowerCase();
-
-      return teamName.includes(search) || countryName.includes(search);
-    });
-    setFilteredTeams(filtered);
   };
 
   const sortTeams = (key) => {
@@ -108,14 +100,6 @@ function Teams({ season, league, search }) {
   useEffect(() => {
     fetchTeams();
   }, [season, league, search]);
-
-  useEffect(() => {
-    setSearchTerm(search || "");
-  }, [search]);
-
-  useEffect(() => {
-    filterTeams();
-  }, [searchTerm, teams]);
 
   if (loading) {
     return renderLoading();
