@@ -97,31 +97,6 @@ export const getGames = async (league, season) => {
   }
 };
 
-export const getGameStatistics = async (params) => {
-  if (!params || Object.keys(params).length === 0) {
-    throw new Error("En az bir parametre gereklidir (id veya ids)");
-  }
-
-  if (params.ids && !params.ids.match(/^\d+(-\d+)*$/)) {
-    throw new Error('ids parametresi "id-id-id" formatında olmalıdır');
-  }
-
-  if (params.ids) {
-    const idsCount = params.ids.split("-").length;
-    if (idsCount > 20) {
-      throw new Error("En fazla 20 maç ID'si kullanılabilir");
-    }
-  }
-
-  try {
-    const response = await apiClient.get("/games/statistics", { params });
-    return response.data;
-  } catch (error) {
-    console.error("Maç istatistikleri getirilirken hata oluştu:", error);
-    throw error;
-  }
-};
-
 export const getGameDetails = async (gameId) => {
   try {
     const response = await apiClient.get("/games/statistics/teams", {
@@ -134,7 +109,7 @@ export const getGameDetails = async (gameId) => {
   }
 };
 
-export const getStandings = async (league, season) => {
+export const getStandings = async (league, season, stage, group) => {
   if (!league || !season) {
     throw new Error("Lig ve sezon parametreleri zorunludur");
   }
@@ -144,11 +119,40 @@ export const getStandings = async (league, season) => {
       params: {
         league,
         season,
+        stage,
+        group,
       },
     });
     return response.data;
   } catch (error) {
     console.error("Lig sıralaması getirilirken hata oluştu:", error);
+    throw error;
+  }
+};
+
+export const getStandingsStages = async (league, season) => {
+  try {
+    const response = await apiClient.get("/standings/stages", {
+      params: { league, season },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Stage getirilirken hata oluştu:", error);
+    throw error;
+  }
+};
+
+export const getStandingsGroups = async (league, season) => {
+  try {
+    const response = await apiClient.get("/standings/groups", {
+      params: {
+        league,
+        season,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Groups getirilirken hata oluştu:", error);
     throw error;
   }
 };

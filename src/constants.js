@@ -19,6 +19,8 @@ export const INITIAL_GAME_FILTERS = {
 };
 
 export const INITIAL_LEAGUE_FILTERS = {
+  stage: "",
   season: "",
   league: "",
+  group: "",
 };

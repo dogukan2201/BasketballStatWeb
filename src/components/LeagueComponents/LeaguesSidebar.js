@@ -6,7 +6,11 @@ import {
   FaSearch,
   FaFlag,
 } from "react-icons/fa";
-import { fetchLeagues } from "../../services/api";
+import {
+  fetchLeagues,
+  getStandingsStages,
+  getStandingsGroups,
+} from "../../services/api";
 import ClearFilterButton from "../ClearFilterButton";
 
 const LeaguesSidebar = ({
@@ -22,6 +26,8 @@ const LeaguesSidebar = ({
   const [error, setError] = useState(null);
   const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
   const [allLeagues, setAllLeagues] = useState([]);
+  const [stages, setStages] = useState([]);
+  const [groups, setGroups] = useState([]);
 
   useEffect(() => {
     const getLeagues = async () => {
@@ -62,6 +68,7 @@ const LeaguesSidebar = ({
       }
     }
   }, []);
+
   useEffect(() => {
     let filteredLeagues = allLeagues;
 
@@ -81,9 +88,50 @@ const LeaguesSidebar = ({
 
     setLeagues(filteredLeagues);
   }, [searchTerm, countrySearchTerm, allLeagues]);
+
   useEffect(() => {
     localStorage.setItem("leagueFilters", JSON.stringify(filters));
   }, [filters]);
+
+  useEffect(() => {
+    const fetchStages = async () => {
+      if (filters.league && filters.season) {
+        try {
+          const data = await getStandingsStages(filters.league, filters.season);
+          if (data && Array.isArray(data.response)) {
+            setStages(data.response);
+          }
+        } catch (error) {
+          console.error("Stages loading error:", error);
+          setStages([]);
+        }
+      } else {
+        setStages([]);
+      }
+    };
+
+    fetchStages();
+  }, [filters.league, filters.season]);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      if (filters.league && filters.season) {
+        try {
+          const data = await getStandingsGroups(filters.league, filters.season);
+          if (data && Array.isArray(data.response)) {
+            setGroups(data.response);
+          }
+        } catch (error) {
+          console.error("Groups loading error:", error);
+          setGroups([]);
+        }
+      } else {
+        setGroups([]);
+      }
+    };
+
+    fetchGroups();
+  }, [filters.league, filters.season]);
 
   const groupedLeagues = leagues.reduce((acc, league) => {
     const country = league.country?.name || "Diğer";
@@ -218,6 +266,50 @@ const LeaguesSidebar = ({
             </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
+
+          {stages.length > 0 && (
+            <div className="mt-4">
+              <label className="text-sm mb-2 flex items-center">
+                <FaFlag className="mr-2" />
+                Stage
+              </label>
+              <select
+                name="stage"
+                value={filters.stage || ""}
+                onChange={onFilterChange}
+                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All Stages</option>
+                {stages.map((stage) => (
+                  <option key={stage} value={stage}>
+                    {stage}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {groups.length > 0 && (
+            <div className="mt-4">
+              <label className="text-sm mb-2 flex items-center">
+                <FaFlag className="mr-2" />
+                Group
+              </label>
+              <select
+                name="group"
+                value={filters.group || ""}
+                onChange={onFilterChange}
+                className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All Groups</option>
+                {groups.map((group) => (
+                  <option key={group} value={group}>
+                    {group}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <ClearFilterButton onClearFilters={handleClearFilters} />
         </div>

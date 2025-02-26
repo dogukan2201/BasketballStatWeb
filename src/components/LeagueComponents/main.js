@@ -3,8 +3,9 @@ import LeaguesTitle from "./LeaguesTitle";
 import { getStandings } from "../../services/api";
 import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
-
-function LeaguesMain({ season, league }) {
+import NoLeaguesFound from "./NoLeaguesFound";
+import LeagueStanding from "./LeagueStanding";
+function LeaguesMain({ season, league, stage, group }) {
   const [standings, setStandings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +20,7 @@ function LeaguesMain({ season, league }) {
       try {
         setLoading(true);
         setError(null);
-        const response = await getStandings(league, season);
+        const response = await getStandings(league, season, stage, group);
 
         if (!response?.response) {
           throw new Error("Sıralama verileri alınamadı");
@@ -37,16 +38,17 @@ function LeaguesMain({ season, league }) {
     };
 
     fetchStandings();
-  }, [league, season]);
+  }, [league, season, stage, group]);
 
   if (loading) return renderLoading();
   if (error) return renderError({ error });
-  if (!league || !season) return <div>Lütfen lig ve sezon seçiniz</div>;
+  if (!standings) return <NoLeaguesFound />;
 
   return (
     <div className="h-screen bg-gray-100 flex">
       <div className="flex-1 flex flex-col overflow-hidden">
         <LeaguesTitle />
+        <LeagueStanding standings={standings} />
       </div>
     </div>
   );

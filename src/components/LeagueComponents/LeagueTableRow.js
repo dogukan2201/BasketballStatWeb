@@ -1,41 +1,46 @@
 import React from "react";
 
-function LeagueTableRow({ league, onSelect }) {
-  return (
-    <tr
-      className="hover:bg-gray-50 cursor-pointer transition-colors"
-      onClick={() => onSelect(league)}
-    >
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10">
-            <img
-              className="h-10 w-10 rounded-full object-contain"
-              src={league.logo}
-              alt={league.name}
-            />
-          </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {league.name}
-            </div>
-            <div className="text-sm text-gray-500">{league.country}</div>
-          </div>
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900">{league.type}</div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-          {league.season}
-        </span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {new Date(league.start_date).toLocaleDateString("tr-TR")}
-      </td>
-    </tr>
-  );
-}
+const TeamLogo = ({ logo, name }) => (
+  <div className="flex items-center gap-3">
+    <img src={logo} alt={name} className="w-6 h-6 object-contain" />
+    <span>{name}</span>
+  </div>
+);
 
+const FormIndicator = ({ form }) => (
+  <div className="flex gap-1">
+    {form.split("").map((result, index) => (
+      <span
+        key={index}
+        className={`
+          inline-flex items-center justify-center w-5 h-5 rounded text-xs font-semibold text-white
+          ${result === "W" ? "bg-green-500" : ""}
+          ${result === "L" ? "bg-red-500" : ""}
+          ${result === "O" ? "bg-yellow-500" : ""}
+        `}
+      >
+        {result}
+      </span>
+    ))}
+  </div>
+);
+const LeagueTableRow = ({ standing }) => (
+  <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+    <td className="p-3">{standing.position}</td>
+    <td className="p-3">
+      <TeamLogo logo={standing.team.logo} name={standing.team.name} />
+    </td>
+    <td className="p-3">{standing.games.played}</td>
+    <td className="p-3">{standing.games.win.total}</td>
+    <td className="p-3">{standing.games.lose.total}</td>
+    <td className="p-3">
+      {(parseFloat(standing.games.win.percentage) * 100).toFixed(1)}%
+    </td>
+    <td className="p-3">{standing.points.for}</td>
+    <td className="p-3">{standing.points.against}</td>
+    <td className="p-3">
+      <FormIndicator form={standing.form} />
+    </td>
+  </tr>
+);
 export default LeagueTableRow;
