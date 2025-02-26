@@ -5,81 +5,83 @@ import {
   FaSlidersH,
   FaBasketballBall,
   FaSearch,
-  FaFlag,
 } from "react-icons/fa";
 import ClearFilterButton from "../ClearFilterButton";
-import { fetchLeagues, getTeams, getSeasons } from "../../services/api";
+import { fetchLeagues, getTeams } from "../../services/api";
+import { LeagueDropdown } from "../SidebarComponents/LeagueDropdown";
+import { TeamDropdown } from "../SidebarComponents/TeamDropdown";
+import {
+  filterAndGroupLeagues,
+  loadLeagues,
+} from "../SidebarComponents/FilterGroupLeagues";
 
 function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
   const [leagues, setLeagues] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [seasons, setSeasons] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [teams, setTeams] = useState([]);
   const [error, setError] = useState(null);
   const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
   const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
-  const [leagueSearchTerm, setLeagueSearchTerm] = useState("");
-  const [countrySearchTerm, setCountrySearchTerm] = useState("");
+  const [searchTerms, setSearchTerms] = useState({
+    leagueSearchTerm: "",
+    countrySearchTerm: "",
+  });
   const [teamSearchTerm, setTeamSearchTerm] = useState("");
   const [allLeagues, setAllLeagues] = useState([]);
   const [allTeams, setAllTeams] = useState([]);
 
+  const filterAndGroupLeagues = (leaguesData) => {
+    let filteredLeagues = [...leaguesData];
+
+    if (searchTerms.countrySearchTerm) {
+      filteredLeagues = filteredLeagues.filter((league) =>
+        league.country?.name
+          ?.toLowerCase()
+          .includes(searchTerms.countrySearchTerm.toLowerCase())
+      );
+    }
+
+    if (searchTerms.leagueSearchTerm) {
+      filteredLeagues = filteredLeagues.filter((league) =>
+        league.name
+          .toLowerCase()
+          .includes(searchTerms.leagueSearchTerm.toLowerCase())
+      );
+    }
+
+    return filteredLeagues.reduce((acc, league) => {
+      const country = league.country?.name || "Diğer";
+      if (!acc[country]) {
+        acc[country] = [];
+      }
+      acc[country].push(league);
+      return acc;
+    }, {});
+  };
+
   useEffect(() => {
     const getLeagues = async () => {
-      try {
-        setLoading(true);
-        const { response } = await fetchLeagues();
-        if (Array.isArray(response)) {
-          setAllLeagues(response);
-          setLeagues(response);
-        }
-      } catch (error) {
-        setError("An error occurred while loading leagues.");
-      } finally {
-        setLoading(false);
-      }
+      await loadLeagues(
+        fetchLeagues,
+        setLoading,
+        setError,
+        setAllLeagues,
+        setLeagues,
+        searchTerms
+      );
     };
-
     getLeagues();
   }, []);
 
   useEffect(() => {
-    let filteredLeagues = allLeagues;
-
-    if (countrySearchTerm) {
-      filteredLeagues = filteredLeagues.filter((league) =>
-        league.country?.name
-          ?.toLowerCase()
-          .includes(countrySearchTerm.toLowerCase())
+    if (allLeagues.length > 0) {
+      const filteredAndGroupedLeagues = filterAndGroupLeagues(
+        allLeagues,
+        searchTerms
       );
+      setLeagues(filteredAndGroupedLeagues);
     }
-
-    if (leagueSearchTerm) {
-      filteredLeagues = filteredLeagues.filter((league) =>
-        league.name.toLowerCase().includes(leagueSearchTerm.toLowerCase())
-      );
-    }
-
-    setLeagues(filteredLeagues);
-  }, [leagueSearchTerm, countrySearchTerm, allLeagues]);
-
-  useEffect(() => {
-    const fetchSeasons = async () => {
-      try {
-        setLoading(true);
-        const response = await getSeasons();
-        if (response && Array.isArray(response.response)) {
-          setSeasons(response.response);
-        }
-      } catch (error) {
-        setError("An error occurred while loading seasons.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSeasons();
-  }, []);
+  }, [searchTerms, allLeagues]);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -92,7 +94,9 @@ function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             setTeams(response);
           }
         } catch (error) {
-          setError("An error occurred while loading teams.");
+          setError("Takımlar yüklenirken bir hata oluştu: " + error.message);
+          setAllTeams([]);
+          setTeams([]);
         } finally {
           setLoading(false);
         }
@@ -101,38 +105,46 @@ function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
         setTeams([]);
       }
     };
-
     fetchTeams();
   }, [filters.league, filters.season]);
 
   useEffect(() => {
     let filteredTeams = allTeams;
-
     if (teamSearchTerm) {
       filteredTeams = filteredTeams.filter((team) =>
         team.name.toLowerCase().includes(teamSearchTerm.toLowerCase())
       );
     }
-
     setTeams(filteredTeams);
   }, [teamSearchTerm, allTeams]);
 
-  const groupedLeagues = leagues.reduce((acc, league) => {
-    const country = league.country?.name || "Other";
-    if (!acc[country]) {
-      acc[country] = [];
+  useEffect(() => {
+    const savedFilters = localStorage.getItem("PlayerFilters");
+    if (savedFilters) {
+      const parsedFilters = JSON.parse(savedFilters);
+      onFilterChange({
+        target: { name: "season", value: parsedFilters.season || "" },
+      });
+      onFilterChange({
+        target: { name: "league", value: parsedFilters.league || "" },
+      });
+      onFilterChange({
+        target: { name: "team", value: parsedFilters.team || "" },
+      });
     }
-    acc[country].push(league);
-    return acc;
-  }, {});
+  }, []);
 
-  if (error) {
-    return <div className="text-red-500 p-4">{error}</div>;
-  }
+  useEffect(() => {
+    localStorage.setItem("PlayerFilters", JSON.stringify(filters));
+  }, [filters]);
 
-  if (!isOpen) {
-    return null;
-  }
+  const handleClearFilters = () => {
+    localStorage.removeItem("PlayerFilters");
+    onClearFilters();
+  };
+
+  if (error) return <div className="text-red-500 p-4">{error}</div>;
+  if (!isOpen) return null;
 
   return (
     <aside
@@ -168,61 +180,16 @@ function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
               </span>
             </button>
 
-            {isLeagueDropdownOpen && (
-              <div className="absolute w-full mt-1 bg-slate-700 rounded-md shadow-lg max-h-96 overflow-y-auto z-30">
-                <div className="p-2 sticky top-0 bg-slate-700 border-b border-slate-600 space-y-2">
-                  <div className="relative">
-                    <FaFlag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={countrySearchTerm}
-                      onChange={(e) => setCountrySearchTerm(e.target.value)}
-                      placeholder="Search Country..."
-                      className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none"
-                    />
-                  </div>
-                  <div className="relative">
-                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={leagueSearchTerm}
-                      onChange={(e) => setLeagueSearchTerm(e.target.value)}
-                      placeholder="Search League..."
-                      className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                {Object.entries(groupedLeagues).map(([country, leagueList]) => (
-                  <div
-                    key={country}
-                    className="border-b border-slate-600 last:border-0"
-                  >
-                    <div className="px-3 py-2 bg-slate-800 font-semibold">
-                      {country}
-                    </div>
-                    {leagueList.map((league) => (
-                      <button
-                        key={league.id}
-                        onClick={() => {
-                          onFilterChange({
-                            target: { name: "league", value: league.id },
-                          });
-                          setIsLeagueDropdownOpen(false);
-                          setLeagueSearchTerm("");
-                          setCountrySearchTerm("");
-                        }}
-                        className={`w-full px-3 py-2 text-left hover:bg-slate-600 flex items-center ${
-                          filters.league === league.id ? "bg-slate-600" : ""
-                        }`}
-                      >
-                        <span>{league.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
+            <LeagueDropdown
+              isOpen={isLeagueDropdownOpen}
+              onClose={() => setIsLeagueDropdownOpen(false)}
+              filters={filters}
+              onFilterChange={onFilterChange}
+              leagues={leagues}
+              loading={loading}
+              searchTerms={searchTerms}
+              setSearchTerms={setSearchTerms}
+            />
           </div>
 
           {/* Season Selection */}
@@ -235,15 +202,18 @@ function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
               name="season"
               value={filters.season || ""}
               onChange={onFilterChange}
-              className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none"
-              disabled={loading}
+              className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Season</option>
-              {seasons.map((season) => (
-                <option key={season} value={season}>
-                  {season}
-                </option>
-              ))}
+              {[...Array(10)].map((_, i) => {
+                const year = 2024 - i;
+                const season = `${year - 1}-${year}`;
+                return (
+                  <option key={season} value={season}>
+                    {season}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
@@ -268,40 +238,15 @@ function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
               </span>
             </button>
 
-            {isTeamDropdownOpen && (
-              <div className="absolute w-full mt-1 bg-slate-700 rounded-md shadow-lg max-h-96 overflow-y-auto z-30">
-                <div className="p-2 sticky top-0 bg-slate-700 border-b border-slate-600">
-                  <div className="relative">
-                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={teamSearchTerm}
-                      onChange={(e) => setTeamSearchTerm(e.target.value)}
-                      placeholder="Search Team..."
-                      className="w-full pl-10 pr-3 py-2 bg-slate-600 rounded-md focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                {teams.map((team) => (
-                  <button
-                    key={team.id}
-                    onClick={() => {
-                      onFilterChange({
-                        target: { name: "team", value: team.id },
-                      });
-                      setIsTeamDropdownOpen(false);
-                      setTeamSearchTerm("");
-                    }}
-                    className={`w-full px-3 py-2 text-left hover:bg-slate-600 flex items-center ${
-                      filters.team === team.id ? "bg-slate-600" : ""
-                    }`}
-                  >
-                    <span>{team.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <TeamDropdown
+              isOpen={isTeamDropdownOpen}
+              onClose={() => setIsTeamDropdownOpen(false)}
+              filters={filters}
+              onFilterChange={onFilterChange}
+              teams={teams}
+              teamSearchTerm={teamSearchTerm}
+              setTeamSearchTerm={setTeamSearchTerm}
+            />
           </div>
 
           {/* Player Search */}
@@ -326,7 +271,7 @@ function PlayerSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             </div>
           </div>
 
-          <ClearFilterButton onClearFilters={onClearFilters} />
+          <ClearFilterButton onClearFilters={handleClearFilters} />
         </div>
       </div>
     </aside>

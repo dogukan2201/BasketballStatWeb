@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
 import MobilMenu from "./MobilMenu";
 import MobilMenuButton from "./MobilMenuButton";
 import NavbarMenuItems from "./NavbarMenuItems";
+import { useLocation } from "react-router-dom";
 
 export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
   const menuItems = [
     {
       name: "Teams",

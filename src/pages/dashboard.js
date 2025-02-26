@@ -9,6 +9,8 @@ import Games from "../components/GameComponents/main";
 import GamesSidebar from "../components/GameComponents/GamesSidebar";
 import Leagues from "../components/LeagueComponents/main";
 import LeaguesSidebar from "../components/LeagueComponents/LeaguesSidebar";
+import { useFilters } from "../hooks/useFilters";
+import Hub from "./hub";
 import {
   INITIAL_TEAM_FILTERS,
   INITIAL_PLAYER_FILTERS,
@@ -16,143 +18,91 @@ import {
   INITIAL_LEAGUE_FILTERS,
 } from "../constants";
 import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const [teamFilters, setTeamFilters] = useState(() => {
-    const savedFilters = localStorage.getItem("TeamFilters");
-    return savedFilters ? JSON.parse(savedFilters) : INITIAL_TEAM_FILTERS;
-  });
+  const {
+    filters: teamFilters,
+    handleFilterChange: handleTeamFilterChange,
+    clearFilters: clearTeamFilters,
+  } = useFilters(INITIAL_TEAM_FILTERS, "TeamFilters");
 
-  const [playerFilters, setPlayerFilters] = useState(() => {
-    const savedPlayerFilters = localStorage.getItem("playerFilters");
-    return savedPlayerFilters
-      ? JSON.parse(savedPlayerFilters)
-      : INITIAL_PLAYER_FILTERS;
-  });
+  const {
+    filters: playerFilters,
+    handleFilterChange: handlePlayerFilterChange,
+    clearFilters: clearPlayerFilters,
+  } = useFilters(INITIAL_PLAYER_FILTERS, "playerFilters");
 
-  const [gameFilters, setGameFilters] = useState(() => {
-    const savedGameFilters = localStorage.getItem("gameFilters");
-    return savedGameFilters
-      ? JSON.parse(savedGameFilters)
-      : INITIAL_GAME_FILTERS;
-  });
+  const {
+    filters: gameFilters,
+    handleFilterChange: handleGameFilterChange,
+    clearFilters: clearGameFilters,
+  } = useFilters(INITIAL_GAME_FILTERS, "gameFilters");
 
-  const [leagueFilters, setLeagueFilters] = useState(() => {
-    const savedLeagueFilters = localStorage.getItem("leagueFilters");
-    return savedLeagueFilters
-      ? JSON.parse(savedLeagueFilters)
-      : INITIAL_LEAGUE_FILTERS;
-  });
+  const {
+    filters: leagueFilters,
+    handleFilterChange: handleLeagueFilterChange,
+    clearFilters: clearLeagueFilters,
+  } = useFilters(INITIAL_LEAGUE_FILTERS, "leagueFilters");
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    const newFilters = { ...teamFilters, [name]: value };
-    setTeamFilters(newFilters);
-    localStorage.setItem("TeamFilters", JSON.stringify(newFilters));
+  const COMPONENT_MAP = {
+    "/dashboard/teams": {
+      Sidebar: TeamsSidebar,
+      Main: Teams,
+      filters: teamFilters,
+      handleFilterChange: handleTeamFilterChange,
+      clearFilters: clearTeamFilters,
+    },
+    "/dashboard/players": {
+      Sidebar: PlayerSidebar,
+      Main: Players,
+      filters: playerFilters,
+      handleFilterChange: handlePlayerFilterChange,
+      clearFilters: clearPlayerFilters,
+    },
+    "/dashboard/games": {
+      Sidebar: GamesSidebar,
+      Main: Games,
+      filters: gameFilters,
+      handleFilterChange: handleGameFilterChange,
+      clearFilters: clearGameFilters,
+    },
+    "/dashboard/leagues": {
+      Sidebar: LeaguesSidebar,
+      Main: Leagues,
+      filters: leagueFilters,
+      handleFilterChange: handleLeagueFilterChange,
+      clearFilters: clearLeagueFilters,
+    },
   };
 
-  const handlePlayerFilterChange = (e) => {
-    const { name, value } = e.target;
-    const newFilters = { ...playerFilters, [name]: value };
-    setPlayerFilters(newFilters);
-    localStorage.setItem("playerFilters", JSON.stringify(newFilters));
-  };
-
-  const handleGameFilterChange = (e) => {
-    const { name, value } = e.target;
-    const newFilters = { ...gameFilters, [name]: value };
-    setGameFilters(newFilters);
-    localStorage.setItem("gameFilters", JSON.stringify(newFilters));
-  };
-
-  const handleLeagueFilterChange = (e) => {
-    const { name, value } = e.target;
-    const newFilters = { ...leagueFilters, [name]: value };
-    setLeagueFilters(newFilters);
-    localStorage.setItem("leagueFilters", JSON.stringify(newFilters));
-  };
-
-  const clearTeamFilters = () => {
-    setTeamFilters(INITIAL_TEAM_FILTERS);
-    localStorage.removeItem("TeamFilters");
-  };
-
-  const clearPlayerFilters = () => {
-    setPlayerFilters(INITIAL_PLAYER_FILTERS);
-    localStorage.removeItem("playerFilters");
-  };
-
-  const clearGameFilters = () => {
-    setGameFilters(INITIAL_GAME_FILTERS);
-    localStorage.removeItem("gameFilters");
-  };
-
-  const clearLeagueFilters = () => {
-    setLeagueFilters(INITIAL_LEAGUE_FILTERS);
-    localStorage.removeItem("leagueFilters");
-  };
+  const currentComponent = COMPONENT_MAP[location.pathname];
 
   const renderSidebar = () => {
-    if (location.pathname === "/dashboard/teams") {
-      return (
-        <TeamsSidebar
-          isOpen={isSidebarOpen}
-          filters={teamFilters}
-          onFilterChange={handleFilterChange}
-          onClearFilters={clearTeamFilters}
-        />
-      );
+    if (!currentComponent) {
+      return null;
     }
-    if (location.pathname === "/dashboard/players") {
-      return (
-        <PlayerSidebar
-          isOpen={isSidebarOpen}
-          filters={playerFilters}
-          onFilterChange={handlePlayerFilterChange}
-          onClearFilters={clearPlayerFilters}
-        />
-      );
-    }
-    if (location.pathname === "/dashboard/games") {
-      return (
-        <GamesSidebar
-          isOpen={isSidebarOpen}
-          filters={gameFilters}
-          onFilterChange={handleGameFilterChange}
-          onClearFilters={clearGameFilters}
-        />
-      );
-    }
-    if (location.pathname === "/dashboard/leagues") {
-      return (
-        <LeaguesSidebar
-          isOpen={isSidebarOpen}
-          filters={leagueFilters}
-          onFilterChange={handleLeagueFilterChange}
-          onClearFilters={clearLeagueFilters}
-        />
-      );
-    }
-    return null;
+
+    const { Sidebar } = currentComponent;
+    return (
+      <Sidebar
+        isOpen={isSidebarOpen}
+        filters={currentComponent.filters}
+        onFilterChange={currentComponent.handleFilterChange}
+        onClearFilters={currentComponent.clearFilters}
+      />
+    );
   };
 
   const renderContent = () => {
-    if (location.pathname === "/dashboard/teams") {
-      return <Teams {...teamFilters} />;
+    if (!currentComponent) {
+      return <Hub />;
     }
-    if (location.pathname === "/dashboard/players") {
-      return <Players {...playerFilters} />;
-    }
-    if (location.pathname === "/dashboard/games") {
-      return <Games {...gameFilters} />;
-    }
-    if (location.pathname === "/dashboard/leagues") {
-      return <Leagues {...leagueFilters} />;
-    }
-    return null;
+    const { Main } = currentComponent;
+    return <Main {...currentComponent.filters} />;
   };
 
   return (
