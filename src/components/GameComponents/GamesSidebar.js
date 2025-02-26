@@ -33,7 +33,7 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
           setLeagues(response);
         }
       } catch (error) {
-        setError("Ligler yüklenirken bir hata oluştu.");
+        setError("An error occurred while loading leagues.");
       } finally {
         setLoading(false);
       }
@@ -52,7 +52,7 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             setTeams(response);
           }
         } catch (error) {
-          setError("Takımlar yüklenirken bir hata oluştu.");
+          setError("An error occurred while loading teams.");
         } finally {
           setLoading(false);
         }
@@ -81,15 +81,14 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
       <div className="p-4">
         <h2 className="text-2xl mb-6 mt-12 flex items-center">
           <FaSlidersH className="mr-2" />
-          Maç Filtreleri
+          Match Filters
         </h2>
 
         <div className="space-y-4">
-          {/* Tarih Seçimi */}
           <div>
             <label className="text-sm mb-2 flex items-center">
               <FaCalendar className="mr-2" />
-              Tarih
+              Date
             </label>
             <input
               type="date"
@@ -100,11 +99,10 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             />
           </div>
 
-          {/* Lig Seçimi */}
           <div className="relative">
             <label className="text-sm mb-2 flex items-center">
               <FaBasketballBall className="mr-2" />
-              Lig
+              League
             </label>
             <button
               onClick={() => setIsLeagueDropdownOpen(!isLeagueDropdownOpen)}
@@ -114,7 +112,7 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
               <span>
                 {filters.league
                   ? leagues.find((l) => l.id === filters.league)?.name
-                  : "Lig Seçin"}
+                  : "Select League"}
               </span>
               <span className="transform transition-transform duration-200">
                 ▼
@@ -143,11 +141,10 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             )}
           </div>
 
-          {/* Sezon Seçimi */}
           <div>
             <label className="text-sm mb-2 flex items-center">
               <FaCalendarAlt className="mr-2" />
-              Sezon
+              Season
             </label>
             <select
               name="season"
@@ -155,7 +152,7 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
               onChange={onFilterChange}
               className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Sezon Seçin</option>
+              <option value="">Select Season</option>
               {seasons.map((season) => (
                 <option key={season} value={season}>
                   {season}
@@ -164,11 +161,10 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             </select>
           </div>
 
-          {/* Takım Seçimi */}
           <div>
             <label className="text-sm mb-2 flex items-center">
               <FaUsers className="mr-2" />
-              Takım
+              Team
             </label>
             <select
               name="team"
@@ -177,7 +173,7 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
               className="w-full px-3 py-2 bg-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={!filters.league || !filters.season}
             >
-              <option value="">Takım Seçin</option>
+              <option value="">Select Team</option>
               {teams.map((team) => (
                 <option key={team.id} value={team.id}>
                   {team.name}

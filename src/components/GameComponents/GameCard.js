@@ -23,7 +23,7 @@ function GameCard({ gameId, selectedGame }) {
         ) {
           console.error("Invalid API response format:", response);
           setError(
-            "Veri formatında hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+            "There was an error in the data format. Please try again later."
           );
           return;
         }
@@ -39,17 +39,15 @@ function GameCard({ gameId, selectedGame }) {
 
         if (!isValidTeamData) {
           console.error("Missing team statistics in response:", response);
-          setError(
-            "Eksik takım istatistikleri. Lütfen daha sonra tekrar deneyiniz."
-          );
+          setError("Missing team statistics. Please try again later.");
           return;
         }
 
         setGameData(response.response);
       } catch (error) {
-        console.error("Maç detayları yüklenirken hata oluştu:", error);
+        console.error("An error occurred while loading game details:", error);
         setError(
-          "Maç detayları yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+          "An error occurred while loading game details. Please try again later."
         );
       } finally {
         setLoading(false);
@@ -151,7 +149,6 @@ function GameCard({ gameId, selectedGame }) {
 
       <div className="bg-white rounded-xl p-3 shadow-inner">
         <div className="space-y-3">
-          {/* Saha İçi İsabetler */}
           <div className="mb-3">
             <h3 className="text-base font-semibold text-gray-800 mb-2 text-center">
               Basic Statistics
@@ -183,7 +180,6 @@ function GameCard({ gameId, selectedGame }) {
             ))}
           </div>
 
-          {/* Karşılaştırmalı İstatistikler */}
           <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">
               Comparative Statistics
@@ -215,24 +211,23 @@ function GameCard({ gameId, selectedGame }) {
             />
           </div>
 
-          {/* Detaylı Ribaund İstatistikleri */}
           <div className="grid grid-cols-2 gap-3 mt-3">
             {gameData.map((team) => (
               <div key={team.team.id} className="bg-gray-50 rounded-lg p-3">
                 <h4 className="text-base font-medium text-gray-800 mb-2">
-                  {team.team.name} - Ribaund
+                  {team.team.name} - Rebound
                 </h4>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Hücum</span>
+                    <span className="text-gray-600">Offensive</span>
                     <span className="font-medium">{team.rebounds.offence}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Savunma</span>
+                    <span className="text-gray-600">Defensive</span>
                     <span className="font-medium">{team.rebounds.defense}</span>
                   </div>
                   <div className="flex justify-between pt-1 border-t">
-                    <span className="text-gray-600">Toplam</span>
+                    <span className="text-gray-600">Total</span>
                     <span className="font-medium">{team.rebounds.total}</span>
                   </div>
                 </div>

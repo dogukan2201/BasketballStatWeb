@@ -7,7 +7,7 @@ export const authService = {
   generateToken: (apiKey) => {
     const tokenData = {
       key: apiKey,
-      exp: new Date().getTime() + 24 * 60 * 60 * 1000, // 24 saat geçerli
+      exp: new Date().getTime() + 24 * 60 * 60 * 1000,
     };
     return CryptoJS.AES.encrypt(
       JSON.stringify(tokenData),
@@ -20,7 +20,6 @@ export const authService = {
       const bytes = CryptoJS.AES.decrypt(token, SECRET_KEY);
       const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-      // Token süresi dolmuş mu kontrol et
       if (decryptedData.exp < new Date().getTime()) {
         authService.logout();
         return false;

@@ -18,7 +18,6 @@ import {
   INITIAL_LEAGUE_FILTERS,
 } from "../constants";
 import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const location = useLocation();

@@ -23,24 +23,24 @@ function Games({ season, league, team, date }) {
   const fetchGames = async () => {
     try {
       if (!season || !league) {
-        throw new Error("Sezon ve lig parametreleri zorunludur.");
+        throw new Error("Season and league parameters are required.");
       }
       setLoading(true);
       setError(null);
       const { response } = await getGames(league, season, team, date);
 
       if (!Array.isArray(response)) {
-        throw new Error("Geçersiz API yanıtı");
+        throw new Error("Invalid API response");
       }
 
       setGames(response);
       setFilteredGames(response);
     } catch (error) {
-      console.error("Maçlar yüklenirken hata oluştu:", error);
+      console.error("An error occurred while loading games:", error);
       setError(
-        error.message.includes("parametreleri") || error.message.includes("API")
+        error.message.includes("parameters") || error.message.includes("API")
           ? error.message
-          : "Maçlar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+          : "An error occurred while loading games. Please try again later."
       );
       setGames([]);
       setFilteredGames([]);

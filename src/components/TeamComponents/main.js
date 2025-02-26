@@ -22,7 +22,7 @@ function Teams({ season, league, search }) {
   const fetchTeams = async () => {
     try {
       if (!season || !league) {
-        throw new Error("Sezon ve lig parametreleri zorunludur.");
+        throw new Error("Season and league parameters are required.");
       }
       setLoading(true);
       setError(null);
@@ -33,16 +33,16 @@ function Teams({ season, league, search }) {
       );
 
       if (!Array.isArray(result.response)) {
-        throw new Error("Geçersiz API yanıtı");
+        throw new Error("Invalid API response");
       }
 
       setFilteredTeams(result.response);
     } catch (error) {
-      console.error("Takımlar yüklenirken hata oluştu:", error);
+      console.error("An error occurred while loading teams:", error);
       setError(
-        error.message.includes("parametreleri") || error.message.includes("API")
+        error.message.includes("parameters") || error.message.includes("API")
           ? error.message
-          : "Takımlar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."
+          : "An error occurred while loading teams. Please try again later."
       );
       setFilteredTeams([]);
     } finally {

@@ -46,7 +46,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none transition-all duration-300 ease-in-out"
+              className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none "
             >
               {isSidebarOpen ? (
                 <FaChevronLeft className="h-5 w-5" />
@@ -70,7 +70,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen }) {
           <div className="flex items-center gap-4">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 rounded-md text-white hover:bg-slate-700 focus:outline-none transition-all duration-300 ease-in-out"
+              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-md text-white hover:bg-slate-700 focus:outline-none "
             >
               <FaSignOutAlt className="h-5 w-5" />
               <span>Logout</span>
