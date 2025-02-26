@@ -12,7 +12,6 @@ const apiClient = axios.create({
   },
 });
 
-// Simple queue system for rate limiting
 const requestQueue = [];
 let isProcessing = false;
 

@@ -5,6 +5,7 @@ import renderLoading from "../RenderLoading";
 import renderError from "../RenderError";
 import RenderNotFound from "../RenderNotFound";
 import LeagueStanding from "./LeagueStanding";
+
 function LeaguesMain({ season, league, stage, group }) {
   const [standings, setStandings] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -46,9 +47,9 @@ function LeaguesMain({ season, league, stage, group }) {
   if (!standings) return <RenderNotFound />;
 
   return (
-    <div className="h-screen bg-gray-100 flex">
+    <div className="h-full  flex">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <LeaguesTitle />
+        <LeaguesTitle standings={standings} />
         <LeagueStanding standings={standings} />
       </div>
     </div>

@@ -22,10 +22,10 @@ export const LeagueProvider = ({ children }) => {
           setLeagues(data.response);
           localStorage.setItem("leagues", JSON.stringify(data.response));
         } else {
-          throw new Error("Geçersiz API yanıtı");
+          throw new Error("Invalid API response");
         }
       } catch (error) {
-        setError("Ligler yüklenirken bir hata oluştu: " + error.message);
+        setError("An error occurred while loading leagues: " + error.message);
         setLeagues([]);
       } finally {
         setLoading(false);

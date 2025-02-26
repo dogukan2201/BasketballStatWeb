@@ -18,7 +18,7 @@ export const filterAndGroupLeagues = (leaguesData, searchTerms) => {
   }
 
   return filteredLeagues.reduce((acc, league) => {
-    const country = league.country?.name || "Diğer";
+    const country = league.country?.name || "Other";
     if (!acc[country]) {
       acc[country] = [];
     }
@@ -46,10 +46,10 @@ export const loadLeagues = async (
       );
       setLeagues(filteredAndGroupedLeagues);
     } else {
-      throw new Error("Geçersiz API yanıtı");
+      throw new Error("Invalid API response");
     }
   } catch (error) {
-    setError("Ligler yüklenirken bir hata oluştu: " + error.message);
+    setError("An error occurred while loading leagues: " + error.message);
     setAllLeagues([]);
     setLeagues({});
   } finally {
