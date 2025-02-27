@@ -8,13 +8,23 @@ import {
   FaCalendar,
 } from "react-icons/fa";
 import ClearFilterButton from "../ClearFilterButton";
+import { LeagueDropdown } from "../SidebarComponents/LeagueDropdown";
+import {
+  filterAndGroupLeagues,
+  loadLeagues,
+} from "../SidebarComponents/FilterGroupLeagues";
 
 function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
-  const [leagues, setLeagues] = useState([]);
+  const [leagues, setLeagues] = useState(localStorage.getItem("leagues"));
   const [teams, setTeams] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [allLeagues, setAllLeagues] = useState([]);
   const [isLeagueDropdownOpen, setIsLeagueDropdownOpen] = useState(false);
+  const [searchTerms, setSearchTerms] = useState({
+    leagueSearchTerm: "",
+    countrySearchTerm: "",
+  });
 
   const seasons = [
     "2023-2024",
@@ -26,21 +36,27 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
 
   useEffect(() => {
     const getLeagues = async () => {
-      try {
-        setLoading(true);
-        const { response } = await fetchLeagues();
-        if (Array.isArray(response)) {
-          setLeagues(response);
-        }
-      } catch (error) {
-        setError("An error occurred while loading leagues.");
-      } finally {
-        setLoading(false);
-      }
+      await loadLeagues(
+        fetchLeagues,
+        setLoading,
+        setError,
+        setAllLeagues,
+        setLeagues,
+        searchTerms
+      );
     };
-
     getLeagues();
   }, []);
+
+  useEffect(() => {
+    if (allLeagues.length > 0) {
+      const filteredAndGroupedLeagues = filterAndGroupLeagues(
+        allLeagues,
+        searchTerms
+      );
+      setLeagues(filteredAndGroupedLeagues);
+    }
+  }, [searchTerms, allLeagues]);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -102,7 +118,7 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
           <div className="relative">
             <label className="text-sm mb-2 flex items-center">
               <FaBasketballBall className="mr-2" />
-              League
+              Country/League
             </label>
             <button
               onClick={() => setIsLeagueDropdownOpen(!isLeagueDropdownOpen)}
@@ -111,34 +127,24 @@ function GamesSidebar({ isOpen, filters, onFilterChange, onClearFilters }) {
             >
               <span>
                 {filters.league
-                  ? leagues.find((l) => l.id === filters.league)?.name
-                  : "Select League"}
+                  ? allLeagues.find((l) => l.id === filters.league)?.name
+                  : "Select Country/League"}
               </span>
               <span className="transform transition-transform duration-200">
                 ▼
               </span>
             </button>
 
-            {isLeagueDropdownOpen && (
-              <div className="absolute w-full mt-1 bg-slate-700 rounded-md shadow-lg max-h-96 overflow-y-auto z-30">
-                {leagues.map((league) => (
-                  <button
-                    key={league.id}
-                    onClick={() => {
-                      onFilterChange({
-                        target: { name: "league", value: league.id },
-                      });
-                      setIsLeagueDropdownOpen(false);
-                    }}
-                    className={`w-full px-3 py-2 text-left hover:bg-slate-600 flex items-center ${
-                      filters.league === league.id ? "bg-slate-600" : ""
-                    }`}
-                  >
-                    <span>{league.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <LeagueDropdown
+              isOpen={isLeagueDropdownOpen}
+              onClose={() => setIsLeagueDropdownOpen(false)}
+              filters={filters}
+              onFilterChange={onFilterChange}
+              leagues={leagues}
+              loading={loading}
+              searchTerms={searchTerms}
+              setSearchTerms={setSearchTerms}
+            />
           </div>
 
           <div>

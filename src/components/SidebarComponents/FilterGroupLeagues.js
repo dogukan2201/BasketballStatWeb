@@ -1,30 +1,39 @@
-export const filterAndGroupLeagues = (leaguesData, searchTerms) => {
-  let filteredLeagues = [...leaguesData];
+export const filterAndGroupLeagues = (leagues, searchTerms) => {
+  const { leagueSearchTerm, countrySearchTerm } = searchTerms;
 
-  if (searchTerms.countrySearchTerm) {
-    filteredLeagues = filteredLeagues.filter((league) =>
-      league.country?.name
-        ?.toLowerCase()
-        .includes(searchTerms.countrySearchTerm.toLowerCase())
-    );
-  }
+  // Önce filtreleme yap
+  const filteredLeagues = leagues.filter((league) => {
+    const matchesLeague = league.name
+      .toLowerCase()
+      .includes(leagueSearchTerm.toLowerCase());
 
-  if (searchTerms.leagueSearchTerm) {
-    filteredLeagues = filteredLeagues.filter((league) =>
-      league.name
-        .toLowerCase()
-        .includes(searchTerms.leagueSearchTerm.toLowerCase())
-    );
-  }
+    const countryName =
+      typeof league.country === "string"
+        ? league.country
+        : league.country?.name || "Other";
 
-  return filteredLeagues.reduce((acc, league) => {
-    const country = league.country?.name || "Other";
+    const matchesCountry = countryName
+      .toLowerCase()
+      .includes(countrySearchTerm.toLowerCase());
+
+    return matchesLeague && matchesCountry;
+  });
+
+  // Sonra ülkelere göre grupla
+  const groupedLeagues = filteredLeagues.reduce((acc, league) => {
+    const country =
+      typeof league.country === "string"
+        ? league.country
+        : league.country?.name || "Other";
+
     if (!acc[country]) {
       acc[country] = [];
     }
     acc[country].push(league);
     return acc;
   }, {});
+
+  return groupedLeagues;
 };
 
 export const loadLeagues = async (
@@ -37,21 +46,14 @@ export const loadLeagues = async (
 ) => {
   try {
     setLoading(true);
-    const data = await fetchLeagues();
-    if (data && Array.isArray(data.response)) {
-      setAllLeagues(data.response);
-      const filteredAndGroupedLeagues = filterAndGroupLeagues(
-        data.response,
-        searchTerms
-      );
-      setLeagues(filteredAndGroupedLeagues);
-    } else {
-      throw new Error("Invalid API response");
+    const { response } = await fetchLeagues();
+    if (Array.isArray(response)) {
+      setAllLeagues(response);
+      const groupedLeagues = filterAndGroupLeagues(response, searchTerms);
+      setLeagues(groupedLeagues);
     }
   } catch (error) {
-    setError("An error occurred while loading leagues: " + error.message);
-    setAllLeagues([]);
-    setLeagues({});
+    setError("An error occurred while loading leagues.");
   } finally {
     setLoading(false);
   }
