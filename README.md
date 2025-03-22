@@ -19,8 +19,7 @@ The Basketball Stats Dashboard is a web application designed to provide basketba
 ## Getting Started
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/basketball-stats-dashboard.git
-   cd basketball-stats-dashboard
+   git clone https://github.com/dogukan2201/BasketballStatWeb.git
    ```
 2. Install dependencies:
    ```sh
@@ -34,5 +33,4 @@ The Basketball Stats Dashboard is a web application designed to provide basketba
    ```sh
    npm start
    ```
-
 
